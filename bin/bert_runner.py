@@ -18,8 +18,8 @@ df_test_ger = read_cache(file_path='../../../cache/german_sink_test.csv')
 strategies = ['multi_noger', 'multi_all', 'ger_only']
 parser = argparse.ArgumentParser()
 parser.add_argument('--strategy', nargs='+', default=['ger_only'], help='What is the list of languages?')
-parser.add_argument('--epochs', type=int, default=2, help='The number of training iterations')
-parser.add_argument('--shuffle', action='store_true', help='If turn on the shuffle')
+parser.add_argument('--epochs', type=int, default=2, choices=range(1, 100), help='The number of training iterations')
+parser.add_argument('--shuffle', default=False, action='store_true', help='If turn on the shuffle')
 args = parser.parse_args()
 print(args)
 
