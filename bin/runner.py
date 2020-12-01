@@ -21,7 +21,6 @@ sourceLocalDataEnglish = SourceLocalDataEnglish(config)
 sourceLocalDataArabic = SourceLocalDataArabic(config)
 sourceLocalDataGerman = SourceLocalDataGerman(config)
 sourceLocalDataPolish = SourceLocalDataPolish(config)
-# sourceLocalDataSpanish = SourceLocalDataSpanish(config)
 sourceLocalDataChinese = SourceLocalDataChinese(config)
 sourceLocalCache = SourceLocalCache(config)
 
@@ -29,7 +28,7 @@ sourceLocalCache = SourceLocalCache(config)
 tasks = [
     ClearCache(sourceLocalCache),
     ComputeEnglishSemEval(sourceLocalDataEnglish, sinkCache),
-    # ComputeEnglishAmazonMovieReview(sourceLocalDataEnglish, sinkCache),
+    ComputeEnglishAmazonMovieReview(sourceLocalDataEnglish, sinkCache),
     ComputeEnglishKaggleSentiment(sourceLocalDataEnglish, sinkCache),
     ComputeEnglishWebisTripad(sourceLocalDataEnglish, sinkCache),
     ComputeEnglishSentoken(sourceLocalDataEnglish, sinkCache),
@@ -38,7 +37,6 @@ tasks = [
     ComputeGermanPolarityClues(sourceLocalDataGerman, sinkCache),
     ComputePolishPolEmo(sourceLocalDataPolish, sinkCache),
     ComputeChineseDouBan(sourceLocalDataChinese, sinkCache),
-    # ComputeSpanishUnknown(sourceLocalDataSpanish, sinkCache),
     FitOutputsToTorch(sourceLocalCache, sinkCache),
     ManageCache(sourceLocalCache),
     SplitTrainTestGerman(sourceLocalCache, sinkCache),

@@ -85,7 +85,7 @@ def declare_pytorch_loader(train: pd.DataFrame, validation: pd.DataFrame, test: 
 
 def preprocess(df_train: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shuffle: bool, random_seed: int = 42,
                batch_size: int = 16,
-               validation_size_ratio: float = 0.9, num_workers: int = 4) -> tuple:
+               validation_size_ratio: float = 0.5, num_workers: int = 4) -> tuple:
     # TODO: get max_len from analyse_sequence .. automatically!
     max_len = analyse_sequence_length(
         df_series=df_train.text,
