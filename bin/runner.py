@@ -38,7 +38,6 @@ tasks = [
     ComputeGermanLeipzig(sourceLocalDataGerman, sinkCache),
     ComputeGermanEval(sourceLocalDataGerman, sinkCache),
     ComputeGermanFilmStarts(sourceLocalDataGerman, sinkCache),
-    ComputeArabicSemEval(sourceLocalDataGerman, sinkCache),
     ComputePolishPolEmo(sourceLocalDataPolish, sinkCache),
     ComputeChineseDouBan(sourceLocalDataChinese, sinkCache),
     FitOutputsToTorch(sourceLocalCache, sinkCache),
