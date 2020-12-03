@@ -39,7 +39,11 @@ class BuiltPyTorchDataset(Dataset):
 
 
 def split_data(df: pd.DataFrame, random_seed: int, validation_size_ratio: float) -> tuple:
-    df_validation, df_test = train_test_split(df, test_size=1 - validation_size_ratio, random_state=random_seed)
+    df_validation, df_test = train_test_split(df,
+                                              test_size=1 - validation_size_ratio,
+                                              random_state=random_seed,
+                                              stratify=df.score
+                                              )
     print('Shape of Validation DataFrame: ', df_validation.shape)
     print('Shape of Test DataFrame: ', df_test.shape)
     return df_validation, df_test

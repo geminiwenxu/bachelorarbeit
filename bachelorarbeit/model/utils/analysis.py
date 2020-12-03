@@ -32,13 +32,13 @@ def explore_data(df: pd.DataFrame, strategy: str) -> None:
     analyse_sentiment(df, strategy)
 
 
-def plot_distribution(series: list, language: str, xlim: list = None, xlabel: str = None) -> None:
+def plot_distribution(series: list, strategy: str, xlim: list = None, xlabel: str = None) -> None:
     sns.displot(series)
     if xlim:
         plt.xlim(xlim)
     if xlabel:
         plt.xlabel(xlabel)
-    plt.savefig(resource_filename(__name__, f'../../../cache/{language}_plot_distribution.png'))
+    plt.savefig(resource_filename(__name__, f'../../../cache/{strategy}_plot_distribution.png'))
 
 
 def analyse_sequence_length(df_series: pd.Series, tokenizer: BertTokenizer, strategy: str) -> int:
@@ -48,7 +48,7 @@ def analyse_sequence_length(df_series: pd.Series, tokenizer: BertTokenizer, stra
     for txt in df_series:
         tokens = tokenizer.encode(txt, max_length=512)
         token_lens.append(len(tokens))
-    plot_distribution(token_lens, xlim=[0, 256], xlabel=f'{strategy}Token count', language=strategy)
+    plot_distribution(token_lens, xlim=[0, 256], xlabel=f'{strategy}Token count', strategy=strategy)
     max_len = 256
     return max_len
 

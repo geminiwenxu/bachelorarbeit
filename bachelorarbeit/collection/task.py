@@ -40,13 +40,12 @@ class ComputeEnglishSemEval(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str):
-                if score in ['negative', '-1', '-2']:
-                    score = -1
-                elif score in ['positive', '1', '2']:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['negative', '-1', '-2', -1, -2]:
+                score = 0
+            elif score in ['positive', '1', '2', 1, 2]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -79,13 +78,12 @@ class ComputeEnglishAmazonMovieReview(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, float):
-                if score in ['1', '2', 1.0, 2.0]:
-                    score = -1
-                elif score in ['4', '5', 4.0, 5.0]:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['1', '2', 1.0, 2.0, 1, 2]:
+                score = 0
+            elif score in ['4', '5', 4.0, 5.0, 4, 5]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -124,43 +122,6 @@ class ComputeEnglishAmazonMovieReview(Task):
         self.sinkCache.insert(self.target_name, self.data)
 
 
-class ComputeEnglishKaggleSentiment(Task):
-    def __init__(self, sourceA, sinkA):
-        self.sourceLocalDataEnglish = sourceA
-        self.sinkCache = sinkA
-        self.source = 'KaggleSentiment'
-        self.language = 'english'
-        self.target_name = 'english_sink'
-        super().__init__()
-
-    def normalise_score(self):
-        def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['0', 0]:
-                    score = -1
-                else:
-                    pass
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
-
-    def extract(self):
-        self.kaggle_sentiment = self.sourceLocalDataEnglish.kaggle_sentiment()
-
-    def transform(self):
-        for file, data in self.kaggle_sentiment:
-            self.data = data
-            self.data['language'] = self.language
-            self.data['source'] = self.source
-            columns_titles = ['score', 'text', 'language', 'source']
-            self.data = self.data.reindex(columns=columns_titles)
-            self.normalise_score()
-            self.store()
-
-    def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
-
-
 class ComputeEnglishWebisTripad(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataEnglish = sourceA
@@ -172,13 +133,12 @@ class ComputeEnglishWebisTripad(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['1', '2', 1, 2]:
-                    score = -1
-                elif score in ['4', '5', 4, 5]:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['1', '2', 1, 2]:
+                score = 0
+            elif score in ['4', '5', 4, 5]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -195,32 +155,6 @@ class ComputeEnglishWebisTripad(Task):
             self.data['source'] = self.source
             self.data = pd.DataFrame([self.data])
             self.normalise_score()
-            self.store()
-
-    def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
-
-
-class ComputeEnglishSentoken(Task):
-    def __init__(self, sourceA, sinkA):
-        self.sourceLocalDataEnglish = sourceA
-        self.sinkCache = sinkA
-        self.source = 'Sentoken'
-        self.language = 'english'
-        self.target_name = 'english_sink'
-        super().__init__()
-
-    def extract(self):
-        self.sentoken = self.sourceLocalDataEnglish.sentoken()
-
-    def transform(self):
-        for score, data in self.sentoken:
-            self.data = {}
-            self.data['score'] = score
-            self.data['text'] = ' '.join(data).replace('\n', '')
-            self.data['language'] = self.language
-            self.data['source'] = self.source
-            self.data = pd.DataFrame([self.data])
             self.store()
 
     def store(self):
@@ -245,13 +179,12 @@ class ComputeArabicSemEval(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str):
-                if score in ['negative', '-1']:
-                    score = -1
-                elif score in ['positive', '1']:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['negative', '-1', -1, -2]:
+                score = 0
+            elif score in ['positive', '1', 1, 2]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -284,13 +217,12 @@ class ComputeGermanScare(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['1', '2', 1, 2]:
-                    score = -1
-                elif score in ['4', '5', 4, 5]:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['1', '2', 1, 2]:
+                score = 0
+            elif score in ['4', '5', 4, 5]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -321,13 +253,12 @@ class ComputeGermanPotts(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['negative']:
-                    score = -1
-                elif score in ['positive']:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['negative', -1]:
+                score = 0
+            elif score in ['positive', 1]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -358,13 +289,12 @@ class ComputeGermanSB(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['negative']:
-                    score = -1
-                elif score in ['positive']:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['negative', -1]:
+                score = 0
+            elif score in ['positive', 1]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -395,13 +325,12 @@ class ComputeGermanEval(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['negative']:
-                    score = -1
-                elif score in ['positive']:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['negative']:
+                score = 0
+            elif score in ['positive']:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -434,13 +363,12 @@ class ComputeGermanFilmStarts(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, float) or isinstance(score, int):
-                if score in [1.0, 2.0, 1, 2]:
-                    score = -1
-                elif score in [4.0, 5.0, 4, 5]:
-                    score = 1
-                else:
-                    score = 0
+            if score in [1.0, 2.0, 1, 2]:
+                score = 0
+            elif score in [4.0, 5.0, 4, 5]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -471,13 +399,12 @@ class ComputeGermanHolidaycheck(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['1', '2', 1, 2]:
-                    score = -1
-                elif score in ['5', 5, '4', 4]:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['1', '2', 1, 2]:
+                score = 0
+            elif score in ['5', 5, '4', 4]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -508,11 +435,10 @@ class ComputeGermanLeipzig(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str):
-                if score in ['__label__neutral']:
-                    score = 0
-                else:
-                    raise NotImplementedError
+            if score in ['__label__neutral']:
+                score = 1
+            else:
+                raise NotImplementedError
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
@@ -549,43 +475,6 @@ class ComputeGermanLeipzig(Task):
         self.sinkCache.insert(self.target_name, self.data)
 
 
-class ComputeGermanPolarityClues(Task):
-    def __init__(self, sourceA, sinkA):
-        self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
-        self.source = 'PolarityClues'
-        self.language = 'german'
-        self.target_name = 'german_sink'
-        super().__init__()
-
-    def normalise_score(self):
-        def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['negative']:
-                    score = -1
-                elif score in ['positive']:
-                    score = 1
-                else:
-                    score = 0
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
-
-    def extract(self):
-        self.scare_german = self.sourceLocalDataGerman.scare_german()
-
-    def transform(self):
-        for file, data in self.scare_german:
-            self.data = data
-            self.data['language'] = self.language
-            self.data['source'] = self.source
-            self.normalise_score()
-            self.store()
-
-    def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
-
-
 class ComputePolishPolEmo(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataPolish = sourceA
@@ -597,11 +486,11 @@ class ComputePolishPolEmo(Task):
 
     def normalise_score(self, score):
         if 'minus' in score:
-            score = -1
-        elif 'plus' in score:
-            score = 1
-        else:
             score = 0
+        elif 'plus' in score:
+            score = 2
+        else:
+            score = 1
         return score
 
     def extract(self):
@@ -621,82 +510,6 @@ class ComputePolishPolEmo(Task):
         self.sinkCache.insert(self.target_name, self.data)
 
 
-class ComputeSpanishUnknown(Task):
-    def __init__(self, sourceA, sinkA):
-        self.sourceLocalDataSpanish = sourceA
-        self.sinkCache = sinkA
-        self.source = 'unknown'
-        self.language = 'spanish'
-        self.target_name = 'spanish_sink'
-        super().__init__()
-
-    def normalise_score(self, score):
-        if isinstance(score, str) or isinstance(score, int):
-            if score in ['-1', '-2', -1, -2]:
-                score = -1
-            elif score in ['1', '2', 1, 2]:
-                score = 1
-            else:
-                score = 0
-        return score
-
-    def extract(self):
-        self.unknown_spanish = self.sourceLocalDataSpanish.unknown_spanish()
-
-    def transform(self):
-        for file, data in self.unknown_spanish:
-            self.data = []
-            for review in data['paper']:
-                for review_item in review:
-                    self.data.append(
-                        {'score': self.normalise_score(review_item['evaluation']), 'text': review_item['text'],
-                         'language': self.language,
-                         'source': self.source})
-            self.data = pd.DataFrame(self.data)
-            self.store()
-
-    def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
-
-
-class FitOutputsToTorch(Task):
-    def __init__(self, sourceA, sinkA):
-        self.sourceLocalCache = sourceA
-        self.sinkCache = sinkA
-        super().__init__()
-
-    def extract(self):
-        self.cache_english = self.sourceLocalCache.cache_english()
-        self.cache_arabic = self.sourceLocalCache.cache_arabic()
-        self.cache_german = self.sourceLocalCache.cache_german()
-        self.cache_chinese = self.sourceLocalCache.cache_chinese()
-        self.cache_polish = self.sourceLocalCache.cache_polish()
-
-    def adjust_score(self, score):
-        if isinstance(score, str) or isinstance(score, int):
-            if score in ['-1', -1]:
-                score = 0
-            elif score in ['0', 0]:
-                score = 1
-            else:
-                score = 2
-        return score
-
-    def transform(self):
-        for self.target_name, language in [('english_cl', self.cache_english), ('arabic_cl', self.cache_arabic),
-                                           ('german_cl', self.cache_german), ('polish_cl', self.cache_polish),
-                                           ('chinese_cl', self.cache_chinese)]:
-            self.data = []
-            for line in language:
-                line['score'] = line['score'].apply(self.adjust_score)
-                self.data = line
-                self.store()
-                self.data = []
-
-    def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
-
-
 class ClearCache(Task):
     def __init__(self, sourceA):
         self.sourceLocalCache = sourceA
@@ -706,13 +519,13 @@ class ClearCache(Task):
         self.sourceLocalCache.clear_cache()
 
 
-class ManageCache(Task):
-    def __init__(self, sourceA):
-        self.sourceLocalCache = sourceA
-        super().__init__()
-
-    def extract(self):
-        self.sourceLocalCache.manage_cache()
+# class ManageCache(Task):
+#     def __init__(self, sourceA):
+#         self.sourceLocalCache = sourceA
+#         super().__init__()
+#
+#     def extract(self):
+#         self.sourceLocalCache.manage_cache()
 
 
 class SplitTrainTestGerman(Task):
@@ -730,7 +543,7 @@ class SplitTrainTestGerman(Task):
         self.data = pd.DataFrame()
         for line in self.cache_german:
             self.data = self.data.append(line, ignore_index=True)
-        self.train, self.test = train_test_split(self.data, test_size=0.4)
+        self.train, self.test = train_test_split(self.data, test_size=0.4, stratify=self.data.score)
         self.store()
 
     def store(self):
@@ -782,13 +595,12 @@ class ComputeChineseDouBan(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if isinstance(score, str) or isinstance(score, int):
-                if score in ['1', '2', 1, 2]:
-                    score = -1
-                elif score in ['4', '5', 4, 5]:
-                    score = 1
-                else:
-                    score = 0
+            if score in ['1', '2', 1, 2]:
+                score = 0
+            elif score in ['4', '5', 4, 5]:
+                score = 2
+            else:
+                score = 1
             return score
 
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))

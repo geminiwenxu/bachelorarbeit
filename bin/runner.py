@@ -2,10 +2,13 @@
 import yaml
 from pkg_resources import resource_filename
 
-from bachelorarbeit.collection.datasource import SourceLocalDataEnglish, SourceLocalDataArabic, SourceLocalDataGerman, SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalCache
+from bachelorarbeit.collection.datasource import SourceLocalDataEnglish, SourceLocalDataArabic, SourceLocalDataGerman, \
+    SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalCache
 from bachelorarbeit.collection.sink import SinkCache
-from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglishAmazonMovieReview, ComputeEnglishKaggleSentiment, ComputeEnglishWebisTripad, ComputeEnglishSentoken, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
-    FitOutputsToTorch, ClearCache, ManageCache, SplitTrainTestGerman, ShuffleLanguages, ComputeGermanPolarityClues, ComputeChineseDouBan, ComputeGermanPotts, ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck,ComputeGermanLeipzig, ComputeGermanSB
+from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglishAmazonMovieReview, \
+    ComputeEnglishWebisTripad, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
+    ClearCache, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
+    ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB
 
 
 def get_config(path: str) -> dict:
@@ -40,8 +43,6 @@ tasks = [
     ComputeGermanFilmStarts(sourceLocalDataGerman, sinkCache),
     ComputePolishPolEmo(sourceLocalDataPolish, sinkCache),
     ComputeChineseDouBan(sourceLocalDataChinese, sinkCache),
-    FitOutputsToTorch(sourceLocalCache, sinkCache),
-    ManageCache(sourceLocalCache),
     SplitTrainTestGerman(sourceLocalCache, sinkCache),
     ShuffleLanguages(sourceLocalCache, sinkCache)
 ]
