@@ -49,7 +49,7 @@ def analyse_sequence_length(df_series: pd.Series, tokenizer: BertTokenizer, stra
         tokens = tokenizer.encode(txt, max_length=512)
         token_lens.append(len(tokens))
     plot_distribution(token_lens, xlim=[0, 256], xlabel=f'{strategy}Token count', language=strategy)
-    max_len = 160
+    max_len = 256
     return max_len
 
 

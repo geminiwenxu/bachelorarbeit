@@ -48,6 +48,7 @@ class ComputeEnglishSemEval(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -86,6 +87,7 @@ class ComputeEnglishAmazonMovieReview(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -139,6 +141,7 @@ class ComputeEnglishKaggleSentiment(Task):
                 else:
                     pass
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -177,6 +180,7 @@ class ComputeEnglishWebisTripad(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -249,6 +253,7 @@ class ComputeArabicSemEval(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -287,6 +292,7 @@ class ComputeGermanScare(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -299,6 +305,245 @@ class ComputeGermanScare(Task):
             self.data['source'] = self.source
             self.normalise_score()
             self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
+
+
+class ComputeGermanPotts(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataGerman = sourceA
+        self.sinkCache = sinkA
+        self.source = 'PotTS'
+        self.language = 'german'
+        self.target_name = 'german_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if isinstance(score, str) or isinstance(score, int):
+                if score in ['negative']:
+                    score = -1
+                elif score in ['positive']:
+                    score = 1
+                else:
+                    score = 0
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.potts_german = self.sourceLocalDataGerman.potts_german()
+
+    def transform(self):
+        for file, data in self.potts_german:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
+
+
+class ComputeGermanSB(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataGerman = sourceA
+        self.sinkCache = sinkA
+        self.source = 'SB10K'
+        self.language = 'german'
+        self.target_name = 'german_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if isinstance(score, str) or isinstance(score, int):
+                if score in ['negative']:
+                    score = -1
+                elif score in ['positive']:
+                    score = 1
+                else:
+                    score = 0
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.sb_german = self.sourceLocalDataGerman.sb_german()
+
+    def transform(self):
+        for file, data in self.sb_german:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
+
+
+class ComputeGermanEval(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataGerman = sourceA
+        self.sinkCache = sinkA
+        self.source = 'GermEval2017'
+        self.language = 'german'
+        self.target_name = 'german_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if isinstance(score, str) or isinstance(score, int):
+                if score in ['negative']:
+                    score = -1
+                elif score in ['positive']:
+                    score = 1
+                else:
+                    score = 0
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.germeval = self.sourceLocalDataGerman.germeval()
+
+    def transform(self):
+        for file, data in self.germeval:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            columnsTitles = ['score', 'text', 'language', 'source']
+            self.data = self.data.reindex(columns=columnsTitles)
+            self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
+
+
+class ComputeGermanFilmStarts(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataGerman = sourceA
+        self.sinkCache = sinkA
+        self.source = 'Filmstarts'
+        self.language = 'german'
+        self.target_name = 'german_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if isinstance(score, float) or isinstance(score, int):
+                if score in [1.0, 2.0, 1, 2]:
+                    score = -1
+                elif score in [4.0, 5.0, 4, 5]:
+                    score = 1
+                else:
+                    score = 0
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.filmstarts_german = self.sourceLocalDataGerman.filmstarts_german()
+
+    def transform(self):
+        for file, data in self.filmstarts_german:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
+
+
+class ComputeGermanHolidaycheck(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataGerman = sourceA
+        self.sinkCache = sinkA
+        self.source = 'Holidaycheck'
+        self.language = 'german'
+        self.target_name = 'german_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if isinstance(score, str) or isinstance(score, int):
+                if score in ['1', '2', 1, 2]:
+                    score = -1
+                elif score in ['5', 5, '4', 4]:
+                    score = 1
+                else:
+                    score = 0
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.holidaycheck_german = self.sourceLocalDataGerman.holidaycheck_german()
+
+    def transform(self):
+        for data in self.holidaycheck_german:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
+
+
+class ComputeGermanLeipzig(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataGerman = sourceA
+        self.sinkCache = sinkA
+        self.source = 'Leipzig'
+        self.language = 'german'
+        self.target_name = 'german_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if isinstance(score, str):
+                if score in ['__label__neutral']:
+                    score = 0
+                else:
+                    raise NotImplementedError
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.leipzig_german = self.sourceLocalDataGerman.leipzig_german()
+
+    def transform(self):
+        dl = {}
+        self.data = []
+        counter = 0
+        for file in self.leipzig_german:
+            for line in file:
+                dl = {}
+                if line.split(' ')[0] == '__label__neutral':
+                    dl = {'score': ''.join(line.split(' ')[0]).replace('\n', '')}
+                    dl.update({'text': ' '.join(line.split(' ')[1:]).replace('\n', '')})
+                else:
+                    continue
+                dl['language'] = self.language
+                dl['source'] = self.source
+                self.data.append(dl)
+                if counter % 10000 == 0 and counter != 0:
+                    self.data = pd.DataFrame(self.data)
+                    self.normalise_score()
+                    self.store()
+                    self.data = []
+                counter += 1
+        self.data = pd.DataFrame(self.data)
+        self.normalise_score()
+        self.store()
 
     def store(self):
         self.sinkCache.insert(self.target_name, self.data)
@@ -323,6 +568,7 @@ class ComputeGermanPolarityClues(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):
@@ -366,7 +612,8 @@ class ComputePolishPolEmo(Task):
             self.data = []
             for line in data:
                 d = line.split('__label__')
-                self.data.append({'score': self.normalise_score(d[1]), 'text': d[0], 'language': self.language, 'source': self.source})
+                self.data.append({'score': self.normalise_score(d[1]), 'text': d[0], 'language': self.language,
+                                  'source': self.source})
             self.data = pd.DataFrame(self.data)
             self.store()
 
@@ -401,8 +648,10 @@ class ComputeSpanishUnknown(Task):
             self.data = []
             for review in data['paper']:
                 for review_item in review:
-                    self.data.append({'score':  self.normalise_score(review_item['evaluation']), 'text': review_item['text'], 'language': self.language,
-                                      'source': self.source})
+                    self.data.append(
+                        {'score': self.normalise_score(review_item['evaluation']), 'text': review_item['text'],
+                         'language': self.language,
+                         'source': self.source})
             self.data = pd.DataFrame(self.data)
             self.store()
 
@@ -434,7 +683,9 @@ class FitOutputsToTorch(Task):
         return score
 
     def transform(self):
-        for self.target_name, language in [('english_cl', self.cache_english), ('arabic_cl', self.cache_arabic), ('german_cl', self.cache_german), ('polish_cl', self.cache_polish), ('chinese_cl', self.cache_chinese)]:
+        for self.target_name, language in [('english_cl', self.cache_english), ('arabic_cl', self.cache_arabic),
+                                           ('german_cl', self.cache_german), ('polish_cl', self.cache_polish),
+                                           ('chinese_cl', self.cache_chinese)]:
             self.data = []
             for line in language:
                 line['score'] = line['score'].apply(self.adjust_score)
@@ -505,7 +756,9 @@ class ShuffleLanguages(Task):
     def transform(self):
         self.data = pd.DataFrame()
         self.data_ng = pd.DataFrame()
-        for lang, data in [('english', self.cache_english), ('arabic', self.cache_arabic), ('german', self.cache_german_train), ('polish', self.cache_polish), ('chinese', self.cache_chinese)]:
+        for lang, data in [('english', self.cache_english), ('arabic', self.cache_arabic),
+                           ('german', self.cache_german_train), ('polish', self.cache_polish),
+                           ('chinese', self.cache_chinese)]:
             for line in data:
                 self.data = self.data.append(line, ignore_index=True)
         self.data_ng = self.data[self.data['language'] != 'german'].copy()
@@ -537,6 +790,7 @@ class ComputeChineseDouBan(Task):
                 else:
                     score = 0
             return score
+
         self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
 
     def extract(self):

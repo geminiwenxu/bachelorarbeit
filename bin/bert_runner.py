@@ -48,7 +48,7 @@ def main():
                 strategy=strategy,
                 shuffle=args.shuffle,
                 random_seed=42,
-                batch_size=16,
+                batch_size=32,
                 validation_size_ratio=0.5,
                 num_workers=4
             )

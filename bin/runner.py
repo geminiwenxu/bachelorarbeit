@@ -5,7 +5,7 @@ from pkg_resources import resource_filename
 from bachelorarbeit.collection.datasource import SourceLocalDataEnglish, SourceLocalDataArabic, SourceLocalDataGerman, SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalCache
 from bachelorarbeit.collection.sink import SinkCache
 from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglishAmazonMovieReview, ComputeEnglishKaggleSentiment, ComputeEnglishWebisTripad, ComputeEnglishSentoken, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
-    FitOutputsToTorch, ClearCache, ManageCache, SplitTrainTestGerman, ShuffleLanguages, ComputeGermanPolarityClues, ComputeChineseDouBan
+    FitOutputsToTorch, ClearCache, ManageCache, SplitTrainTestGerman, ShuffleLanguages, ComputeGermanPolarityClues, ComputeChineseDouBan, ComputeGermanPotts, ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck,ComputeGermanLeipzig, ComputeGermanSB
 
 
 def get_config(path: str) -> dict:
@@ -29,12 +29,16 @@ tasks = [
     ClearCache(sourceLocalCache),
     ComputeEnglishSemEval(sourceLocalDataEnglish, sinkCache),
     ComputeEnglishAmazonMovieReview(sourceLocalDataEnglish, sinkCache),
-    ComputeEnglishKaggleSentiment(sourceLocalDataEnglish, sinkCache),
     ComputeEnglishWebisTripad(sourceLocalDataEnglish, sinkCache),
-    ComputeEnglishSentoken(sourceLocalDataEnglish, sinkCache),
     ComputeArabicSemEval(sourceLocalDataArabic, sinkCache),
     ComputeGermanScare(sourceLocalDataGerman, sinkCache),
-    ComputeGermanPolarityClues(sourceLocalDataGerman, sinkCache),
+    ComputeGermanPotts(sourceLocalDataGerman, sinkCache),
+    ComputeGermanSB(sourceLocalDataGerman, sinkCache),
+    ComputeGermanHolidaycheck(sourceLocalDataGerman, sinkCache),
+    ComputeGermanLeipzig(sourceLocalDataGerman, sinkCache),
+    ComputeGermanEval(sourceLocalDataGerman, sinkCache),
+    ComputeGermanFilmStarts(sourceLocalDataGerman, sinkCache),
+    ComputeArabicSemEval(sourceLocalDataGerman, sinkCache),
     ComputePolishPolEmo(sourceLocalDataPolish, sinkCache),
     ComputeChineseDouBan(sourceLocalDataChinese, sinkCache),
     FitOutputsToTorch(sourceLocalCache, sinkCache),
@@ -52,6 +56,7 @@ def main():
             task.transform()
         except Exception as e:
             print("Error: ", e)
+    print('Task runner complete.')
 
 
 if __name__ == "__main__":

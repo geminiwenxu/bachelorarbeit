@@ -127,6 +127,64 @@ class SourceLocalDataGerman(DataSource):
             if all([substring in file_name for substring in substrings]):
                 yield file_name, self.get_csv(file_path=file_path, file_config=file_config)
 
+    def potts_german(self) -> pd.DataFrame:
+        source_path = 'PotTS/preprocessed-no-noise-cleaner/'
+        substrings = ['.tsv']
+        colnames = ['score', 'text']
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 2]}
+        files = self.get_all_file_paths(self.sub_folder + source_path)
+        for file_name, file_path in files:
+            if all([substring in file_name for substring in substrings]):
+                yield file_name, self.get_csv(file_path=file_path, file_config=file_config)
+
+    def sb_german(self) -> pd.DataFrame:
+        source_path = 'SB10K/preprocessed/'
+        substrings = ['.tsv']
+        colnames = ['score', 'text']
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 2]}
+        files = self.get_all_file_paths(self.sub_folder + source_path)
+        for file_name, file_path in files:
+            if all([substring in file_name for substring in substrings]):
+                yield file_name, self.get_csv(file_path=file_path, file_config=file_config)
+
+    def germeval(self) -> pd.DataFrame:
+        source_path = 'germeval2017/'
+        substrings = ['.tsv']
+        colnames = ['text', 'score']
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': 0, 'usecols': [3, 1]}
+        files = self.get_all_file_paths(self.sub_folder + source_path)
+        for file_name, file_path in files:
+            if all([substring in file_name for substring in substrings]):
+                yield file_name, self.get_csv(file_path=file_path, file_config=file_config)
+
+    def filmstarts_german(self) -> pd.DataFrame:
+        source_path = 'filmstarts/'
+        substrings = ['.tsv']
+        colnames = ['score', 'text']
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 2]}
+        files = self.get_all_file_paths(self.sub_folder + source_path)
+        for file_name, file_path in files:
+            if all([substring in file_name for substring in substrings]):
+                yield file_name, self.get_csv(file_path=file_path, file_config=file_config)
+
+    def holidaycheck_german(self) -> pd.DataFrame:
+        source_path = 'holidaycheck/'
+        colnames = ['score', 'text']
+        file_path = self.sub_folder + source_path+'holidaycheck.clean.filtered.tsv'
+        return self.stream_large_csv(file_path=file_path,
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': '\t', 'usecols': [0, 1],
+                                                  'names': colnames})
+
+    def leipzig_german(self) -> list:
+        file_path1 = self.sub_folder + 'leipzig/deu-newscrawl-2017-labeled'
+        file_path2 = self.sub_folder + 'leipzig/deu-wikipedia-2016-labeled'
+        file_path3 = self.sub_folder + 'leipzig/deu-mixed-labeled'
+        return [
+            self.stream_large_txt(file_path=file_path1),
+            self.stream_large_txt(file_path=file_path2),
+            self.stream_large_txt(file_path=file_path3)
+                ]
+
 
 class SourceLocalDataPolish(DataSource):
     sub_folder = "polish/"
