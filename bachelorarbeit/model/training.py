@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
 
 from bachelorarbeit.model.classifier import SentimentClassifier
-from bachelorarbeit.model.utils.analysis import accuracy_epoch
+from bachelorarbeit.model.utils.analysis import plot_training_results
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -101,11 +101,12 @@ def train(model: SentimentClassifier, train_data_loader: DataLoader, val_data_lo
         history['train_loss'].append(train_loss)
         history['val_acc'].append(val_acc)
         history['val_loss'].append(val_loss)
+        history['epochs'].append(epoch + 1)
 
         if val_acc > best_accuracy:
             best_model = model
             best_accuracy = val_acc
-    accuracy_epoch(
+    plot_training_results(
         history,
         model_name=model_name
     )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from bachelorarbeit.model.preprocessor import preprocess
+from bachelorarbeit.model.preprocessor import preprocess, split_data
 from bachelorarbeit.model.testing import test
 from bachelorarbeit.model.training import get_model, train
 from bachelorarbeit.model.utils.analysis import explore_data
@@ -14,7 +14,7 @@ from bachelorarbeit.model.utils.reader import read_cache
 
 
 class_names = ['negative', 'neutral', 'positive']
-df_test_ger = read_cache(file_path='../../../cache/german_sink_test.csv')
+df_val_test_ger = read_cache(file_path='../../../cache/german_sink_test.csv')
 strategies = ['multi_noger', 'multi_all', 'ger_only']
 parser = argparse.ArgumentParser()
 parser.add_argument('--strategy', nargs='+', default=['ger_only'], help='What is the list of languages?')
@@ -38,18 +38,22 @@ def main():
                 df = read_cache(file_path='../../../cache/multi_lang_sink.csv')
             else:
                 raise NotImplementedError
+
+            df_validate_ger, df_test_ger = split_data(df_val_test_ger, random_seed=42, validation_size_ratio=0.5)
+
             explore_data(
                 df=df,
+                df_val=df_validate_ger,
+                df_test=df_test_ger,
                 strategy=strategy
             )
-            train_data_loader, val_data_loader, test_data_loader, df_validation, df_test = preprocess(
+            train_data_loader, val_data_loader, test_data_loader = preprocess(
                 df_train=df,
+                df_validate=df_validate_ger,
                 df_test=df_test_ger,
                 strategy=strategy,
                 shuffle=args.shuffle,
-                random_seed=42,
                 batch_size=32,
-                validation_size_ratio=0.5,
                 num_workers=4
             )
             model = get_model(class_names)
@@ -58,7 +62,7 @@ def main():
                 train_data_loader=train_data_loader,
                 val_data_loader=val_data_loader,
                 training_set=df,
-                validation_set=df_validation,
+                validation_set=df_validate_ger,
                 epochs=args.epochs,
                 model_name=strategy
             )

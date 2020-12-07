@@ -87,23 +87,17 @@ def declare_pytorch_loader(train: pd.DataFrame, validation: pd.DataFrame, test: 
     return train_data_loader, val_data_loader, test_data_loader
 
 
-def preprocess(df_train: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shuffle: bool, random_seed: int = 42,
-               batch_size: int = 16,
-               validation_size_ratio: float = 0.5, num_workers: int = 4) -> tuple:
+def preprocess(df_train: pd.DataFrame, df_validate: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shuffle: bool,
+               batch_size: int = 16, num_workers: int = 4) -> tuple:
     # TODO: get max_len from analyse_sequence .. automatically!
     max_len = analyse_sequence_length(
         df_series=df_train.text,
         tokenizer=tokenizer,
         strategy=strategy
     )
-    df_validation, df_test = split_data(
-        df=df_test,
-        random_seed=random_seed,
-        validation_size_ratio=validation_size_ratio
-    )
     train_data_loader, val_data_loader, test_data_loader = declare_pytorch_loader(
         train=df_train,
-        validation=df_validation,
+        validation=df_validate,
         test=df_test,
         tokenizer=tokenizer,
         max_len=max_len,
@@ -111,4 +105,4 @@ def preprocess(df_train: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shu
         num_workers=num_workers,
         shuffle=shuffle
     )
-    return train_data_loader, val_data_loader, test_data_loader, df_validation, df_test
+    return train_data_loader, val_data_loader, test_data_loader
