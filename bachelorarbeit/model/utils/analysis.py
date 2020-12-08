@@ -17,8 +17,7 @@ def save_value_count(df: pd.DataFrame, strategy: str, set_: str):
 
 def explore_dataframe(df: pd.DataFrame, strategy: str, set_: str):
     print('Shape of the DataFrame: ', df.shape)
-    print('Information about the DataFrame:')
-    df.info()
+    print('Memory Consumption of DataFrame in MB:', df.memory_usage(deep=True).sum() / 1000000)
     save_value_count(df=df, strategy=strategy, set_=set_)
     return None
 
@@ -45,6 +44,7 @@ def analyse_sentiment(df: pd.DataFrame, strategy: str, set_: str) -> None:
 
 
 def explore_data(df: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame, strategy: str) -> None:
+    print('Analysing Training and Test Data:')
     explore_dataframe(df, strategy, 'train')
     explore_dataframe(df_val, strategy, 'validation')
     explore_dataframe(df_test, strategy, 'test')

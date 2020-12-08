@@ -5,20 +5,20 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from bachelorarbeit.model.classifier import SentimentClassifier
-from bachelorarbeit.model.training import eval_model, device
+from bachelorarbeit.model.training import eval_model
 from bachelorarbeit.model.utils.analysis import plot_confusion_matrix
 from bachelorarbeit.model.utils.analysis import save_test_reports
 
 RANDOM_SEED = 42
 
 
-def run_test(model, df_test, test_data_loader):
+def run_test(model: SentimentClassifier, df_test: pd.DataFrame, test_data_loader, device: torch.device):
     loss_fn = nn.CrossEntropyLoss().to(device)
     test_acc, _ = eval_model(model, test_data_loader, loss_fn, device, len(df_test))
     return test_acc.item()
 
 
-def get_predictions(best_model: SentimentClassifier, data_loader):
+def get_predictions(best_model: SentimentClassifier, data_loader, device: torch.device):
     best_model = best_model.eval()
     review_texts = []
     predictions = []
@@ -46,18 +46,22 @@ def get_predictions(best_model: SentimentClassifier, data_loader):
     return review_texts, predictions, prediction_probs, actual_values
 
 
-def test(df_test: pd.DataFrame, test_data_loader: DataLoader, best_model: SentimentClassifier, class_names: list, model_name: str) -> None:
-    test_acc = run_test(best_model, df_test, test_data_loader)
-    review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model, test_data_loader)
+def test(df_test: pd.DataFrame, test_data_loader: DataLoader, best_model: SentimentClassifier, device: torch.device, class_names: list, model_name: str) -> None:
+    print('Starting Test Procedure:')
+    test_acc = run_test(model=best_model, df_test=df_test, test_data_loader=test_data_loader, device=device)
+    review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model=best_model, data_loader=test_data_loader, device=device)
+    print('Test Procedure Complete:')
     save_test_reports(test_acc=test_acc,
                       test_input=review_texts,
                       predictions=predictions,
                       prediction_probs=prediction_probs,
                       actual_values=actual_values,
                       class_names=class_names,
-                      model_name=model_name)
+                      model_name=model_name
+                      )
     plot_confusion_matrix(real_values=actual_values,
                           predictions=predictions,
                           class_names=class_names,
-                          model_name=model_name)
+                          model_name=model_name
+                          )
     return None

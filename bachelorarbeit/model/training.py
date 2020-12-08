@@ -10,23 +10,11 @@ from transformers import AdamW, get_linear_schedule_with_warmup
 from bachelorarbeit.model.classifier import SentimentClassifier
 from bachelorarbeit.model.utils.analysis import plot_training_results
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-# Building Sentiment Classifier starts here ----------------------------------------
-
-def get_model(class_names) -> SentimentClassifier:
-    model = SentimentClassifier(n_classes=len(class_names))
-    if torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
-    model = model.to(device)
-    return model
-
 
 # Training starts here ----------------------------------------
 
 
-def setup_training(train_data_loader, model: SentimentClassifier, epoch: int = 10, learning_rate: float = 2e-5,
+def setup_training(train_data_loader, model: SentimentClassifier, device: torch.device, epoch: int = 10, learning_rate: float = 2e-5,
                    correct_bias: bool = False, num_warmup_steps: int = 0) -> tuple:
     optimizer = AdamW(
         model.parameters(),
@@ -80,13 +68,15 @@ def eval_model(model, data_loader, loss_fn, device, n_examples):
     return correct_predictions.double() / n_examples, np.mean(losses)
 
 
-def train(model: SentimentClassifier, train_data_loader: DataLoader, val_data_loader: DataLoader,
+def train(model: SentimentClassifier, device: torch.device, train_data_loader: DataLoader, val_data_loader: DataLoader,
           training_set: pd.DataFrame, validation_set: pd.DataFrame, epochs: int, model_name: str):
     optimizer, total_steps, scheduler, loss_fn = setup_training(
         model=model,
         train_data_loader=train_data_loader,
-        epoch=epochs
+        epoch=epochs,
+        device=device
     )
+    print('Starting Training Procedure:')
     history = defaultdict(list)
     best_accuracy = 0
     best_model = object()
@@ -108,6 +98,7 @@ def train(model: SentimentClassifier, train_data_loader: DataLoader, val_data_lo
         if val_acc > best_accuracy:
             best_model = model
             best_accuracy = val_acc
+    print('Training Procedure Complete!')
     plot_training_results(
         history,
         model_name=model_name
