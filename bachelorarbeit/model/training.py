@@ -17,6 +17,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def get_model(class_names) -> SentimentClassifier:
     model = SentimentClassifier(n_classes=len(class_names))
+    if torch.cuda.device_count() > 1:
+        model = nn.DataParallel(model)
     model = model.to(device)
     return model
 
