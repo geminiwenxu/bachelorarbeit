@@ -95,33 +95,29 @@ def plot_training_results(history: defaultdict, model_name: str):
 
 def save_training_results(acc_df: pd.DataFrame, loss_df: pd.DataFrame, model_name: str):
     training_report_df = pd.concat([acc_df, loss_df], axis=1, sort=False)
+    training_report_df['training_accuracy'] = training_report_df['training_accuracy'].astype('float')
+    training_report_df['validation_accuracy'] = training_report_df['validation_accuracy'].astype('float')
     training_report_df.to_csv(resource_filename(__name__, f'../../../cache/{model_name}_training_report.csv'), sep=';',
                               index_label='index')
     return None
 
 
 def plot_training_accuracy(df: pd.DataFrame, model_name: str):
-    # df_melt = df.melt('epoch', var_name='cols', value_name='Accuracy')
-    df_2 = df.set_index('epoch', inplace=True)
-    sns.set_style('ticks')
-    sns.set_palette('flare')
     fig, ax = plt.subplots()
     fig.set_size_inches(11.7, 8.27)
-    sns.lineplot(data=df_2, ax=ax)
-    ax.set(xlabel='Epoch', ylabel='Accuracy', title=f'Training Function - {model_name}')
+    ax.plot(df['training_accuracy'], label='training accuracy')
+    ax.plot(df['validation_accuracy'], label='validation accuracy')
+    ax.set(xlabel='Epoch', ylabel='Accuracy', title=f'Training Function - {model_name}', ylim=[0, 1])
     fig.legend()
     fig.savefig(resource_filename(__name__, f'../../../cache/{model_name}_accuracy_epoch.png'))
     return None
 
 
 def plot_training_loss(df: pd.DataFrame, model_name: str):
-    # df_melt = df.melt('epoch', var_name='cols', value_name='Loss')
-    df_2 = df.set_index('epoch', inplace=True)
-    sns.set_style('ticks')
-    sns.set_palette('flare')
     fig, ax = plt.subplots()
     fig.set_size_inches(11.7, 8.27)
-    sns.lineplot(data=df_2, ax=ax)
+    ax.plot(df['training_loss'], label='training loss')
+    ax.plot(df['validation_loss'], label='validation loss')
     ax.set(xlabel='Epoch', ylabel='Loss', title=f'Loss Function - {model_name}')
     fig.legend()
     fig.savefig(resource_filename(__name__, f'../../../cache/{model_name}_loss_epoch.png'))
@@ -139,8 +135,6 @@ def plot_confusion_matrix(real_values: list, predictions: list, class_names: lis
     fig, ax = plt.subplots()
     fig.set_size_inches(11.7, 8.27)
     sns.heatmap(cm_df, annot=True, fmt="d", ax=ax).set_title(f'Confusion Matrix of Test Results - {model_name}')
-    # fig.yaxis.set_ticklabels(ax.yaxis.get_ticklabels(), rotation=0, ha='right')
-    # fig.xaxis.set_ticklabels(ax.xaxis.get_ticklabels(), rotation=30, ha='right')
     ax.set(xlabel='Predicted sentiment', ylabel='Actual sentiment')
     fig.savefig(resource_filename(__name__, f'../../../cache/{model_name}_confusion_matrix.png'))
     return None
