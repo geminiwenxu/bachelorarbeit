@@ -78,9 +78,9 @@ class ComputeEnglishAmazonMovieReview(Task):
 
     def normalise_score(self):
         def change_score(score):
-            if score in ['1', '2', 1.0, 2.0, 1, 2]:
+            if float(score) in [1.0, 2.0]:
                 score = 0
-            elif score in ['4', '5', 4.0, 5.0, 4, 5]:
+            elif float(score) in [4.0, 5.0]:
                 score = 2
             else:
                 score = 1
