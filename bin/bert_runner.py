@@ -16,6 +16,7 @@ from bachelorarbeit.model.utils.reader import read_cache
 
 # CUDA MULTIPROCESSING
 # https://discuss.pytorch.org/t/difference-between-torch-device-cuda-and-torch-device-cuda-0/46306/20
+# https://stackoverflow.com/questions/54216920/how-to-use-multiple-gpus-in-pytorch
 
 class_names = ['negative', 'neutral', 'positive']
 strategies = ['multi_noger', 'multi_all', 'ger_only']
@@ -33,7 +34,7 @@ def setup_model(class_names) -> tuple:
     print('Setting up Model:')
     if torch.cuda.is_available():
         print('CUDA is available, setting up Tensors to work with CUDA')
-        device = torch.device("cuda:0")
+        device = torch.device("cuda")
     else:
         print('CUDA is NOT available, setting up Tensors to work with CPU')
         device = torch.device("cpu")
