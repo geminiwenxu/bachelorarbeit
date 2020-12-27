@@ -8,7 +8,8 @@ from bachelorarbeit.collection.sink import SinkCache
 from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglishAmazonMovieReview, \
     ComputeEnglishWebisTripad, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
     ClearCache, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
-    ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB
+    ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB, \
+    ComputeDownSampleLanguages
 
 
 def get_config(path: str) -> dict:
@@ -44,7 +45,8 @@ tasks = [
     ComputePolishPolEmo(sourceLocalDataPolish, sinkCache),
     ComputeChineseDouBan(sourceLocalDataChinese, sinkCache),
     SplitTrainTestGerman(sourceLocalCache, sinkCache),
-    ShuffleLanguages(sourceLocalCache, sinkCache)
+    ShuffleLanguages(sourceLocalCache, sinkCache),
+    ComputeDownSampleLanguages(sourceLocalCache, sinkCache)
 ]
 
 

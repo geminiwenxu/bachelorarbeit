@@ -1,4 +1,5 @@
 import pandas as pd
+import sklearn
 from sklearn.model_selection import train_test_split
 
 
@@ -519,13 +520,40 @@ class ClearCache(Task):
         self.sourceLocalCache.clear_cache()
 
 
-# class ManageCache(Task):
-#     def __init__(self, sourceA):
-#         self.sourceLocalCache = sourceA
-#         super().__init__()
-#
-#     def extract(self):
-#         self.sourceLocalCache.manage_cache()
+class ComputeChineseDouBan(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataChinese = sourceA
+        self.sinkCache = sinkA
+        self.source = 'DouBan'
+        self.language = 'chinese'
+        self.target_name = 'chinese_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if score in ['1', '2', 1, 2]:
+                score = 0
+            elif score in ['4', '5', 4, 5]:
+                score = 2
+            else:
+                score = 1
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.douban = self.sourceLocalDataChinese.douban_movies()
+
+    def transform(self):
+        for data in self.douban:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            self.store()
+
+    def store(self):
+        self.sinkCache.insert(self.target_name, self.data)
 
 
 class SplitTrainTestGerman(Task):
@@ -584,37 +612,39 @@ class ShuffleLanguages(Task):
         self.sinkCache.insert(self.target_name_ng, self.data_ng)
 
 
-class ComputeChineseDouBan(Task):
+class ComputeDownSampleLanguages(Task):
     def __init__(self, sourceA, sinkA):
-        self.sourceLocalDataChinese = sourceA
+        self.sourceLocalCache = sourceA
         self.sinkCache = sinkA
-        self.source = 'DouBan'
-        self.language = 'chinese'
-        self.target_name = 'chinese_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['1', '2', 1, 2]:
-                score = 0
-            elif score in ['4', '5', 4, 5]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
-
     def extract(self):
-        self.douban = self.sourceLocalDataChinese.douban_movies()
+        self.cache_multi_lang = self.sourceLocalCache.cache_multi_lang()
+        self.cache_multi_lang_noger = self.sourceLocalCache.cache_multi_lang_noger()
+        self.cache_german_train = self.sourceLocalCache.cache_german_train()
+        self.cache_german_test = self.sourceLocalCache.cache_german_test()
 
     def transform(self):
-        for data in self.douban:
-            self.data = data
-            self.data['language'] = self.language
-            self.data['source'] = self.source
-            self.normalise_score()
+        for model, cache in [('german_sink_test_balanced', self.cache_german_test),
+                             ('german_sink_train_balanced', self.cache_german_train),
+                             ('multi_lang_sink_balanced', self.cache_multi_lang),
+                             ('multi_lang_noger_sink_balanced', self.cache_multi_lang_noger)]:
+            self.data = pd.DataFrame()
+            self.model = model
+            for chunk in cache:
+                class_sizes = chunk.iloc[:, 0].value_counts()
+                min_class_size = min(class_sizes)
+                samples = []
+                for class_index in class_sizes.index.values:
+                    class_sample = chunk[chunk.iloc[:, 0] == class_index]
+                    if 0 < min_class_size < class_sample.shape[0]:
+                        class_sample = sklearn.utils.resample(class_sample, replace=False, n_samples=min_class_size,
+                                                              random_state=11)
+                    samples.append(class_sample)
+                samples = pd.concat(samples)
+                samples = samples.sample(frac=1).reset_index(drop=True)
+                self.data = self.data.append(samples, ignore_index=True)
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkCache.insert(self.model, self.data)

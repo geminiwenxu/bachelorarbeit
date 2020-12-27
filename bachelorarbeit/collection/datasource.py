@@ -202,6 +202,11 @@ class SourceLocalCache(DataSource):
         return self.stream_large_csv(file_path=file_path,
                                      file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
 
+    def cache_german_test(self) -> pd.DataFrame:
+        file_path = self.sub_folder + 'german_sink_test.csv'
+        return self.stream_large_csv(file_path=file_path,
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+
     def cache_polish(self) -> pd.DataFrame:
         file_path = self.sub_folder + 'polish_sink.csv'
         return self.stream_large_csv(file_path=file_path,
@@ -209,6 +214,16 @@ class SourceLocalCache(DataSource):
 
     def cache_chinese(self) -> pd.DataFrame:
         file_path = self.sub_folder + 'chinese_sink.csv'
+        return self.stream_large_csv(file_path=file_path,
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+
+    def cache_multi_lang(self) -> pd.DataFrame:
+        file_path = self.sub_folder + 'multi_lang_sink.csv'
+        return self.stream_large_csv(file_path=file_path,
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+
+    def cache_multi_lang_noger(self) -> pd.DataFrame:
+        file_path = self.sub_folder + 'multi_lang_noger_sink.csv'
         return self.stream_large_csv(file_path=file_path,
                                      file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
 
