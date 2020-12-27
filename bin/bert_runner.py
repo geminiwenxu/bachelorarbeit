@@ -22,6 +22,8 @@ class_names = ['negative', 'neutral', 'positive']
 strategies = ['multi_noger', 'multi_all', 'ger_only']
 parser = argparse.ArgumentParser()
 parser.add_argument('--strategy', nargs='+', default=['ger_only'], help='What is the list of languages?')
+parser.add_argument('--balanced_training', default=False, action='store_true', help='Using balanced training sets')
+parser.add_argument('--balanced_testing', default=False, action='store_true', help='Using balanced test sets')
 parser.add_argument('--epochs', type=int, default=2, choices=range(1, 100), help='The number of training iterations')
 parser.add_argument('--shuffle', default=False, action='store_true', help='If turn on the shuffle')
 args = parser.parse_args()
@@ -49,34 +51,50 @@ def setup_model(class_names) -> tuple:
     return model, device
 
 
-def get_training_data(strategy: str):
+def get_training_data(strategy: str, balanced: bool):
     if strategy == 'ger_only':
-        print('Loading Training Data: "german_sink_train.csv"')
-        df = read_cache(file_path='../../../cache/german_sink_train.csv')
+        if balanced:
+            print('Loading Training Data: "german_sink_train_balanced.csv"')
+            df = read_cache(file_path='../../../cache/german_sink_train_balanced.csv')
+        else:
+            print('Loading Training Data: "german_sink_train.csv"')
+            df = read_cache(file_path='../../../cache/german_sink_train.csv')
     elif strategy == 'multi_noger':
-        print('Loading Training Data: "multi_lang_noger_sink.csv"')
-        df = read_cache(file_path='../../../cache/multi_lang_noger_sink.csv')
+        if balanced:
+            print('Loading Training Data: "multi_lang_noger_sink_balanced.csv"')
+            df = read_cache(file_path='../../../cache/multi_lang_noger_sink_balanced.csv')
+        else:
+            print('Loading Training Data: "multi_lang_noger_sink.csv"')
+            df = read_cache(file_path='../../../cache/multi_lang_noger_sink.csv')
     elif strategy == 'multi_all':
-        print('Loading Training Data: "multi_lang_sink.csv"')
-        df = read_cache(file_path='../../../cache/multi_lang_sink.csv')
+        if balanced:
+            print('Loading Training Data: "multi_lang_sink_balanced.csv"')
+            df = read_cache(file_path='../../../cache/multi_lang_sink_balanced.csv')
+        else:
+            print('Loading Training Data: "multi_lang_sink.csv"')
+            df = read_cache(file_path='../../../cache/multi_lang_sink.csv')
     else:
         raise NotImplementedError
     return df
 
 
-def get_test_data():
-    print('Loading Test Data: "german_sink_test.csv"')
-    return read_cache(file_path='../../../cache/german_sink_test.csv')
+def get_test_data(balanced: bool):
+    if balanced:
+        print('Loading Test Data: "german_sink_test_balanced.csv"')
+        return read_cache(file_path='../../../cache/german_sink_test_balanced.csv')
+    else:
+        print('Loading Test Data: "german_sink_test.csv"')
+        return read_cache(file_path='../../../cache/german_sink_test.csv')
 
 
 def main():
     for strategy in args.strategy:
         print("\n-------------------------------")
-        print(f" Start working on: {strategy}")
+        print(f" Start to work on model: {strategy} with balanced_training: {args.balanced_training}, and balanced_testing: {args.balanced_testing}")
         print("-------------------------------\n")
         if strategy in strategies:
-            df = get_training_data(strategy=strategy)
-            df_val_test_ger = get_test_data()
+            df = get_training_data(strategy=strategy, balanced=args.balanced_training)
+            df_val_test_ger = get_test_data(balanced=args.balanced_testing)
             df_validate_ger, df_test_ger = split_data(df_val_test_ger, random_seed=42, validation_size_ratio=0.5)
 
             explore_data(
