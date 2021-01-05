@@ -21,7 +21,7 @@ from bachelorarbeit.model.utils.reader import read_cache
 class_names = ['negative', 'neutral', 'positive']
 strategies = ['multi_noger', 'multi_all', 'ger_only']
 parser = argparse.ArgumentParser()
-parser.add_argument('--strategy', nargs='+', default=['ger_only'], help='What is the list of languages?')
+parser.add_argument('--strategy', nargs='+', choices=strategies, help='What is the list of languages?')
 parser.add_argument('--balanced_training', default=False, action='store_true', help='Using balanced training sets')
 parser.add_argument('--balanced_testing', default=False, action='store_true', help='Using balanced test sets')
 parser.add_argument('--epochs', type=int, default=2, choices=range(1, 100), help='The number of training iterations')
