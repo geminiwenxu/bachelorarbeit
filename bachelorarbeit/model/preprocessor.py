@@ -90,7 +90,7 @@ def declare_pytorch_loader(train: pd.DataFrame, validation: pd.DataFrame, test: 
 
 
 def preprocess(df_train: pd.DataFrame, df_validate: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shuffle: bool, logger,
-               batch_size: int = 16, num_workers: int = 4) -> tuple:
+               batch_size: int = 32, num_workers: int = 4) -> tuple:
     # TODO: get max_len from analyse_sequence .. automatically!
     logger.info(f'{strategy} --> Setting up Data Processing Pipeline for PyTorch with parameters: shuffle={shuffle}, batch_size={batch_size}, num_workers={num_workers}')
     max_len = analyse_sequence_length(
