@@ -562,6 +562,7 @@ class SplitTrainTestGerman(Task):
         self.sinkCache = sinkA
         self.train_name = 'german_sink_train'
         self.test_name = 'german_sink_test'
+        self.validation_name = 'german_sink_validation'
         super().__init__()
 
     def extract(self):
@@ -571,12 +572,14 @@ class SplitTrainTestGerman(Task):
         self.data = pd.DataFrame()
         for line in self.cache_german:
             self.data = self.data.append(line, ignore_index=True)
-        self.train, self.test = train_test_split(self.data, test_size=0.4, stratify=self.data.score)
+        self.train, self.test = train_test_split(self.data, random_state=1, test_size=0.4, stratify=self.data.score)
+        self.validation, self.test = train_test_split(self.data, random_state=1, test_size=0.5, stratify=self.test.score)
         self.store()
 
     def store(self):
         self.sinkCache.insert(self.train_name, self.train)
         self.sinkCache.insert(self.test_name, self.test)
+        self.sinkCache.insert(self.validation_name, self.validation)
 
 
 class ShuffleLanguages(Task):
@@ -623,10 +626,12 @@ class ComputeDownSampleLanguages(Task):
         self.cache_multi_lang_noger = self.sourceLocalCache.cache_multi_lang_noger()
         self.cache_german_train = self.sourceLocalCache.cache_german_train()
         self.cache_german_test = self.sourceLocalCache.cache_german_test()
+        self.cache_german_validation = self.sourceLocalCache.cache_german_validation()
 
     def transform(self):
         for model, cache in [('german_sink_test_balanced', self.cache_german_test),
                              ('german_sink_train_balanced', self.cache_german_train),
+                             ('german_sink_validation_balanced', self.cache_german_validation),
                              ('multi_lang_sink_balanced', self.cache_multi_lang),
                              ('multi_lang_noger_sink_balanced', self.cache_multi_lang_noger)]:
             self.data = pd.DataFrame()
