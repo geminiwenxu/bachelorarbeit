@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import pandas as pd
 import torch
@@ -6,6 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from transformers import BertTokenizer
 
 from bachelorarbeit.model.utils.analysis import analyse_sequence_length
+from bachelorarbeit.model import logger
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-cased', do_lower_case=False)
 

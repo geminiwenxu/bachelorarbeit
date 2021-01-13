@@ -3,7 +3,6 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 import torch
-import pickle
 from datetime import datetime
 from torch import nn
 from torch.utils.data import DataLoader
@@ -12,11 +11,12 @@ from pkg_resources import resource_filename
 
 from bachelorarbeit.model.classifier import SentimentClassifier
 from bachelorarbeit.model.utils.analysis import plot_training_results
+from bachelorarbeit.model import logger
 
 
 # Training starts here ----------------------------------------
 
-def setup_training(train_data_loader, model: SentimentClassifier, device: torch.device, logger, model_name, epoch: int = 10, learning_rate: float = 2e-5,
+def setup_training(train_data_loader, model: SentimentClassifier, device: torch.device, model_name, epoch: int = 10, learning_rate: float = 2e-5,
                    correct_bias: bool = False, num_warmup_steps: int = 0) -> tuple:
     logger.info(f"{model_name} --> Setting up training procedure with parameters: epoch: {epoch}, learning_rate: {learning_rate}, correct_bias: {correct_bias}, num_warmup_steps: {num_warmup_steps}")
     optimizer = AdamW(
@@ -72,13 +72,12 @@ def eval_model(model, data_loader, loss_fn, device, n_examples):
 
 
 def train(model: SentimentClassifier, device: torch.device, train_data_loader: DataLoader, val_data_loader: DataLoader,
-          training_set: pd.DataFrame, validation_set: pd.DataFrame, epochs: int, model_name: str, logger):
+          training_set: pd.DataFrame, validation_set: pd.DataFrame, epochs: int, model_name: str):
     optimizer, total_steps, scheduler, loss_fn = setup_training(
         model=model,
         train_data_loader=train_data_loader,
         epoch=epochs,
         device=device,
-        logger=logger,
         model_name=model_name
     )
     logger.info(f"{model_name} --> Starting Training Procedure:")
@@ -112,7 +111,7 @@ def train(model: SentimentClassifier, device: torch.device, train_data_loader: D
         history,
         model_name=model_name
     )
-    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.sav')
+    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.bin')
     logger.info(f"{model_name} --> Saving optimal model to disk: {filename}")
-    pickle.dump(model, open(filename, 'wb'))
+    torch.save(model.state_dict(), filename)
     return best_model

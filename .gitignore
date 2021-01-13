@@ -2,7 +2,7 @@
 .idea/
 data/
 venv/
-model/
+models/
 sink/
 cache/
 /__pycache__/

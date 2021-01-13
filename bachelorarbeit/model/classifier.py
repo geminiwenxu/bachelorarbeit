@@ -1,5 +1,7 @@
+import logging
 from torch import nn
 from transformers import BertModel
+from bachelorarbeit.model import logger
 
 
 class SentimentClassifier(nn.Module):

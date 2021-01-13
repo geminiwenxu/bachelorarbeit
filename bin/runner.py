@@ -26,7 +26,7 @@ log_datetime = datetime.now().isoformat()
 log_path = resource_filename(__name__, '../logs')
 if not os.path.exists(log_path):
     os.mkdir(log_path)
-file_log_handler = logging.FileHandler(f'{log_path}/{log_datetime}_collection.log')
+file_log_handler = logging.FileHandler(f"{log_path}/{log_datetime}_collection.log")
 logger = logging.getLogger(__name__)
 logger.addHandler(file_log_handler)
 logger.setLevel('INFO')

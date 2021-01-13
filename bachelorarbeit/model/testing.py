@@ -1,6 +1,5 @@
 import pandas as pd
 import torch
-import pickle
 import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader
@@ -10,6 +9,7 @@ from bachelorarbeit.model.classifier import SentimentClassifier
 from bachelorarbeit.model.training import eval_model
 from bachelorarbeit.model.utils.analysis import plot_confusion_matrix
 from bachelorarbeit.model.utils.analysis import save_test_reports
+from bachelorarbeit.model import logger
 
 
 RANDOM_SEED = 42
@@ -49,13 +49,15 @@ def get_predictions(best_model: SentimentClassifier, data_loader, device: torch.
     return review_texts, predictions, prediction_probs, actual_values
 
 
-def test(df_test: pd.DataFrame, test_data_loader: DataLoader, device: torch.device, class_names: list, model_name: str, logger) -> None:
-    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.sav')
+def test(df_test: pd.DataFrame, test_data_loader: DataLoader, device: torch.device, class_names: list, model_name: str) -> None:
+    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.bin')
     logger.info(f"{model_name} --> Loading optimised model from disk: {filename}")
-    best_model = pickle.load(open(filename, 'rb'))
+    model = SentimentClassifier(len(class_names))
+    model.load_state_dict(torch.load(filename))
+    model = model.to(device)
     logger.info(f"{model_name} --> Starting Test Procedure:")
-    test_acc = run_test(model=best_model, df_test=df_test, test_data_loader=test_data_loader, device=device)
-    review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model=best_model, data_loader=test_data_loader, device=device)
+    test_acc = run_test(model=model, df_test=df_test, test_data_loader=test_data_loader, device=device)
+    review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model=model, data_loader=test_data_loader, device=device)
     logger.info(f"{model_name} --> Test Procedure Complete:")
     save_test_reports(test_acc=test_acc,
                       test_input=review_texts,
@@ -63,13 +65,11 @@ def test(df_test: pd.DataFrame, test_data_loader: DataLoader, device: torch.devi
                       prediction_probs=prediction_probs,
                       actual_values=actual_values,
                       class_names=class_names,
-                      model_name=model_name,
-                      logger=logger
+                      model_name=model_name
                       )
     plot_confusion_matrix(real_values=actual_values,
                           predictions=predictions,
                           class_names=class_names,
-                          model_name=model_name,
-                          logger=logger
+                          model_name=model_name
                           )
     return None

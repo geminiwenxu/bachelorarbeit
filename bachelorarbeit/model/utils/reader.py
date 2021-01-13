@@ -1,5 +1,6 @@
 import pandas as pd
 from pkg_resources import resource_filename
+from bachelorarbeit.model import logger
 
 
 def read_cache(file_path: str) -> pd.DataFrame:
@@ -11,7 +12,7 @@ def read_cache(file_path: str) -> pd.DataFrame:
     return df
 
 
-def get_training_data(strategy: str, balanced: bool, logger):
+def get_training_data(strategy: str, balanced: bool):
     if strategy == 'ger_only':
         if balanced:
             logger.info('Loading Training Data: "german_sink_train_balanced.csv"')
@@ -39,7 +40,7 @@ def get_training_data(strategy: str, balanced: bool, logger):
     return df
 
 
-def get_test_data(balanced: bool, logger):
+def get_test_data(balanced: bool):
     if balanced:
         vali_path = '../../../sink/german_sink_validation_balanced.csv'
         test_path = '../../../sink/german_sink_test_balanced.csv'
@@ -50,6 +51,6 @@ def get_test_data(balanced: bool, logger):
         logger.info('Loading Validation and Test Data: "german_sink_test.csv"')
     df_validation = read_cache(file_path=vali_path)
     df_test = read_cache(file_path=test_path)
-    logger.info(f'Shape of Validation Set with balanced={balanced}: {df_validation.shape}', df_validation.shape)
+    logger.info(f'Shape of Validation Set with balanced={balanced}: {df_validation.shape}')
     logger.info(f'Shape of Test Set with balanced={balanced}: {df_test.shape}')
     return df_validation, df_test
