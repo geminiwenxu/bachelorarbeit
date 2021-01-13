@@ -20,7 +20,7 @@ class Task:
 class ComputeEnglishSemEval(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataEnglish = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'SemEvalEnglish'
         self.language = 'english'
         self.target_name = 'english_sink'
@@ -65,13 +65,13 @@ class ComputeEnglishSemEval(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeEnglishAmazonMovieReview(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataEnglish = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'AmazonMovieReview'
         self.language = 'english'
         self.target_name = 'english_sink'
@@ -120,13 +120,13 @@ class ComputeEnglishAmazonMovieReview(Task):
         self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeEnglishWebisTripad(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataEnglish = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'WebisTripad'
         self.language = 'english'
         self.target_name = 'english_sink'
@@ -159,13 +159,13 @@ class ComputeEnglishWebisTripad(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeArabicSemEval(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataArabic = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'SemEvalArabic'
         self.language = 'arabic'
         self.target_name = 'arabic_sink'
@@ -204,13 +204,13 @@ class ComputeArabicSemEval(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanScare(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'SCARE'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -240,13 +240,13 @@ class ComputeGermanScare(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanPotts(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'PotTS'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -276,13 +276,13 @@ class ComputeGermanPotts(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanSB(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'SB10K'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -312,13 +312,13 @@ class ComputeGermanSB(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanEval(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'GermEval2017'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -350,13 +350,13 @@ class ComputeGermanEval(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanFilmStarts(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'Filmstarts'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -386,13 +386,13 @@ class ComputeGermanFilmStarts(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanHolidaycheck(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'Holidaycheck'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -422,13 +422,13 @@ class ComputeGermanHolidaycheck(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputeGermanLeipzig(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataGerman = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'Leipzig'
         self.language = 'german'
         self.target_name = 'german_sink'
@@ -473,13 +473,13 @@ class ComputeGermanLeipzig(Task):
         self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class ComputePolishPolEmo(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataPolish = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'PolEmo'
         self.language = 'polish'
         self.target_name = 'polish_sink'
@@ -508,22 +508,22 @@ class ComputePolishPolEmo(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
-class ClearCache(Task):
+class ClearLocalSink(Task):
     def __init__(self, sourceA):
-        self.sourceLocalCache = sourceA
+        self.sourceLocalSink = sourceA
         super().__init__()
 
     def extract(self):
-        self.sourceLocalCache.clear_cache()
+        self.sourceLocalSink.clear_sink()
 
 
 class ComputeChineseDouBan(Task):
     def __init__(self, sourceA, sinkA):
         self.sourceLocalDataChinese = sourceA
-        self.sinkCache = sinkA
+        self.sinkLocal = sinkA
         self.source = 'DouBan'
         self.language = 'chinese'
         self.target_name = 'chinese_sink'
@@ -553,56 +553,56 @@ class ComputeChineseDouBan(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name, self.data)
 
 
 class SplitTrainTestGerman(Task):
     def __init__(self, sourceA, sinkA):
-        self.sourceLocalCache = sourceA
-        self.sinkCache = sinkA
+        self.sourceLocalSink = sourceA
+        self.sinkLocal = sinkA
         self.train_name = 'german_sink_train'
         self.test_name = 'german_sink_test'
         self.validation_name = 'german_sink_validation'
         super().__init__()
 
     def extract(self):
-        self.cache_german = self.sourceLocalCache.cache_german()
+        self.sink_german = self.sourceLocalSink.sink_german()
 
     def transform(self):
         self.data = pd.DataFrame()
-        for line in self.cache_german:
+        for line in self.sink_german:
             self.data = self.data.append(line, ignore_index=True)
         self.train, self.test = train_test_split(self.data, random_state=1, test_size=0.4, stratify=self.data.score)
         self.validation, self.test = train_test_split(self.test, random_state=1, test_size=0.5, stratify=self.test.score)
         self.store()
 
     def store(self):
-        self.sinkCache.insert(self.train_name, self.train)
-        self.sinkCache.insert(self.test_name, self.test)
-        self.sinkCache.insert(self.validation_name, self.validation)
+        self.sinkLocal.insert(self.train_name, self.train)
+        self.sinkLocal.insert(self.test_name, self.test)
+        self.sinkLocal.insert(self.validation_name, self.validation)
 
 
 class ShuffleLanguages(Task):
     def __init__(self, sourceA, sinkA):
-        self.sourceLocalCache = sourceA
-        self.sinkCache = sinkA
+        self.sourceLocalSink = sourceA
+        self.sinkLocal = sinkA
         self.target_name = 'multi_lang_sink'
         self.target_name_ng = 'multi_lang_noger_sink'
         super().__init__()
 
     def extract(self):
-        self.cache_english = self.sourceLocalCache.cache_english()
-        self.cache_arabic = self.sourceLocalCache.cache_arabic()
-        self.cache_german_train = self.sourceLocalCache.cache_german_train()
-        self.cache_polish = self.sourceLocalCache.cache_polish()
-        self.cache_chinese = self.sourceLocalCache.cache_chinese()
+        self.sink_english = self.sourceLocalSink.sink_english()
+        self.sink_arabic = self.sourceLocalSink.sink_arabic()
+        self.sink_german_train = self.sourceLocalSink.sink_german_train()
+        self.sink_polish = self.sourceLocalSink.sink_polish()
+        self.sink_chinese = self.sourceLocalSink.sink_chinese()
 
     def transform(self):
         self.data = pd.DataFrame()
         self.data_ng = pd.DataFrame()
-        for lang, data in [('english', self.cache_english), ('arabic', self.cache_arabic),
-                           ('german', self.cache_german_train), ('polish', self.cache_polish),
-                           ('chinese', self.cache_chinese)]:
+        for lang, data in [('english', self.sink_english), ('arabic', self.sink_arabic),
+                           ('german', self.sink_german_train), ('polish', self.sink_polish),
+                           ('chinese', self.sink_chinese)]:
             for line in data:
                 self.data = self.data.append(line, ignore_index=True)
         self.data_ng = self.data[self.data['language'] != 'german'].copy()
@@ -611,29 +611,29 @@ class ShuffleLanguages(Task):
         self.store()
 
     def store(self):
-        self.sinkCache.insert(self.target_name, self.data)
-        self.sinkCache.insert(self.target_name_ng, self.data_ng)
+        self.sinkLocal.insert(self.target_name, self.data)
+        self.sinkLocal.insert(self.target_name_ng, self.data_ng)
 
 
 class ComputeDownSampleLanguages(Task):
     def __init__(self, sourceA, sinkA):
-        self.sourceLocalCache = sourceA
-        self.sinkCache = sinkA
+        self.sourceLocalSink = sourceA
+        self.sinkLocal = sinkA
         super().__init__()
 
     def extract(self):
-        self.cache_multi_lang = self.sourceLocalCache.cache_multi_lang()
-        self.cache_multi_lang_noger = self.sourceLocalCache.cache_multi_lang_noger()
-        self.cache_german_train = self.sourceLocalCache.cache_german_train()
-        self.cache_german_test = self.sourceLocalCache.cache_german_test()
-        self.cache_german_validation = self.sourceLocalCache.cache_german_validation()
+        self.sink_multi_lang = self.sourceLocalSink.sink_multi_lang()
+        self.sink_multi_lang_noger = self.sourceLocalSink.sink_multi_lang_noger()
+        self.sink_german_train = self.sourceLocalSink.sink_german_train()
+        self.sink_german_test = self.sourceLocalSink.sink_german_test()
+        self.sink_german_validation = self.sourceLocalSink.sink_german_validation()
 
     def transform(self):
-        for model, cache in [('german_sink_test_balanced', self.cache_german_test),
-                             ('german_sink_train_balanced', self.cache_german_train),
-                             ('german_sink_validation_balanced', self.cache_german_validation),
-                             ('multi_lang_sink_balanced', self.cache_multi_lang),
-                             ('multi_lang_noger_sink_balanced', self.cache_multi_lang_noger)]:
+        for model, cache in [('german_sink_test_balanced', self.sink_german_test),
+                             ('german_sink_train_balanced', self.sink_german_train),
+                             ('german_sink_validation_balanced', self.sink_german_validation),
+                             ('multi_lang_sink_balanced', self.sink_multi_lang),
+                             ('multi_lang_noger_sink_balanced', self.sink_multi_lang_noger)]:
             self.data = pd.DataFrame()
             self.model = model
             for chunk in cache:
@@ -652,4 +652,4 @@ class ComputeDownSampleLanguages(Task):
             self.store()
 
     def store(self):
-        self.sinkCache.insert(self.model, self.data)
+        self.sinkLocal.insert(self.model, self.data)

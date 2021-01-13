@@ -6,11 +6,11 @@ from datetime import datetime
 from pkg_resources import resource_filename
 
 from bachelorarbeit.collection.datasource import SourceLocalDataEnglish, SourceLocalDataArabic, SourceLocalDataGerman, \
-    SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalCache
-from bachelorarbeit.collection.sink import SinkCache
+    SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalSink
+from bachelorarbeit.collection.sink import LocalSink
 from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglishAmazonMovieReview, \
     ComputeEnglishWebisTripad, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
-    ClearCache, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
+    ClearLocalSink, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
     ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB, \
     ComputeDownSampleLanguages
 
@@ -43,6 +43,7 @@ stderr_log_handler.setFormatter(formatter)
 sink_path = resource_filename(__name__, '../sink')
 cache_path = resource_filename(__name__, '../cache')
 data_path = resource_filename(__name__, '../data')
+model_path = resource_filename(__name__, '../model')
 if not os.path.exists(sink_path):
     os.mkdir(sink_path)
     logger.info("Created Path '/sink'")
@@ -52,37 +53,39 @@ if not os.path.exists(cache_path):
 if not os.path.exists(data_path):
     os.mkdir(data_path)
     logger.info("Created Path '/data'")
-
+if not os.path.exists(model_path):
+    os.mkdir(model_path)
+    logger.info("Created Path '/model'")
 
 config = get_config('/../config/collection_config.yaml')
 
-sinkCache = SinkCache(config, logger)
+localSink = LocalSink(config, logger)
 sourceLocalDataEnglish = SourceLocalDataEnglish(config, logger)
 sourceLocalDataArabic = SourceLocalDataArabic(config, logger)
 sourceLocalDataGerman = SourceLocalDataGerman(config, logger)
 sourceLocalDataPolish = SourceLocalDataPolish(config, logger)
 sourceLocalDataChinese = SourceLocalDataChinese(config, logger)
-sourceLocalCache = SourceLocalCache(config, logger)
+sourceLocalSink = SourceLocalSink(config, logger)
 
 # Pipeline of tasks:
 tasks = [
-    # ClearCache(sourceLocalCache),
-    # ComputeEnglishSemEval(sourceLocalDataEnglish, sinkCache),
-    # ComputeEnglishAmazonMovieReview(sourceLocalDataEnglish, sinkCache),
-    # ComputeEnglishWebisTripad(sourceLocalDataEnglish, sinkCache),
-    # ComputeArabicSemEval(sourceLocalDataArabic, sinkCache),
-    # ComputeGermanScare(sourceLocalDataGerman, sinkCache),
-    # ComputeGermanPotts(sourceLocalDataGerman, sinkCache),
-    # ComputeGermanSB(sourceLocalDataGerman, sinkCache),
-    # ComputeGermanHolidaycheck(sourceLocalDataGerman, sinkCache),
-    # ComputeGermanLeipzig(sourceLocalDataGerman, sinkCache),
-    # ComputeGermanEval(sourceLocalDataGerman, sinkCache),
-    # ComputeGermanFilmStarts(sourceLocalDataGerman, sinkCache),
-    # ComputePolishPolEmo(sourceLocalDataPolish, sinkCache),
-    # ComputeChineseDouBan(sourceLocalDataChinese, sinkCache),
-    SplitTrainTestGerman(sourceLocalCache, sinkCache),
-    ShuffleLanguages(sourceLocalCache, sinkCache),
-    ComputeDownSampleLanguages(sourceLocalCache, sinkCache)
+    ClearLocalSink(sourceLocalSink),
+    ComputeEnglishSemEval(sourceLocalDataEnglish, localSink),
+    ComputeEnglishAmazonMovieReview(sourceLocalDataEnglish, localSink),
+    ComputeEnglishWebisTripad(sourceLocalDataEnglish, localSink),
+    ComputeArabicSemEval(sourceLocalDataArabic, localSink),
+    ComputeGermanScare(sourceLocalDataGerman, localSink),
+    ComputeGermanPotts(sourceLocalDataGerman, localSink),
+    ComputeGermanSB(sourceLocalDataGerman, localSink),
+    ComputeGermanHolidaycheck(sourceLocalDataGerman, localSink),
+    ComputeGermanLeipzig(sourceLocalDataGerman, localSink),
+    ComputeGermanEval(sourceLocalDataGerman, localSink),
+    ComputeGermanFilmStarts(sourceLocalDataGerman, localSink),
+    ComputePolishPolEmo(sourceLocalDataPolish, localSink),
+    ComputeChineseDouBan(sourceLocalDataChinese, localSink),
+    SplitTrainTestGerman(sourceLocalSink, localSink),
+    ShuffleLanguages(sourceLocalSink, localSink),
+    ComputeDownSampleLanguages(sourceLocalSink, localSink)
 ]
 
 

@@ -1,9 +1,10 @@
 .DS_Store
 .idea/
-cache/*.csv
-cache/*.png
 data/
 venv/
+model/
+sink/
+cache/
 /__pycache__/
 *.pyc
 *.log

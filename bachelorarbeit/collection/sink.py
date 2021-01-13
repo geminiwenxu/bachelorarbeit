@@ -12,7 +12,7 @@ class Sink:
         data.to_csv(resource_filename(__name__, file_path) + file_name + ".csv", **self.file_instructions['csv'])
 
 
-class SinkCache(Sink):
+class LocalSink(Sink):
 
     def insert(self, file_name, data):
         self.insert_to_disk(file_path=self.file_instructions['path'], file_name=file_name, data=data)
