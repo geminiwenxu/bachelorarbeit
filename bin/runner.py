@@ -39,6 +39,21 @@ file_log_handler.setFormatter(formatter)
 stderr_log_handler.setFormatter(formatter)
 
 
+# Setup project structure
+sink_path = resource_filename(__name__, '../sink')
+cache_path = resource_filename(__name__, '../cache')
+data_path = resource_filename(__name__, '../data')
+if not os.path.exists(sink_path):
+    os.mkdir(sink_path)
+    logger.info("Created Path '/sink'")
+if not os.path.exists(cache_path):
+    os.mkdir(cache_path)
+    logger.info("Created Path '/cache'")
+if not os.path.exists(data_path):
+    os.mkdir(data_path)
+    logger.info("Created Path '/data'")
+
+
 config = get_config('/../config/collection_config.yaml')
 
 sinkCache = SinkCache(config, logger)

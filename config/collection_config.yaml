@@ -1,5 +1,5 @@
 files:
-  path: ../../cache/
+  path: ../../sink/
   csv:
     sep: ;
     encoding: utf-8
