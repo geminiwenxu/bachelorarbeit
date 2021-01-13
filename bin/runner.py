@@ -43,7 +43,7 @@ stderr_log_handler.setFormatter(formatter)
 sink_path = resource_filename(__name__, '../sink')
 cache_path = resource_filename(__name__, '../cache')
 data_path = resource_filename(__name__, '../data')
-model_path = resource_filename(__name__, '../model')
+models_path = resource_filename(__name__, '../models')
 if not os.path.exists(sink_path):
     os.mkdir(sink_path)
     logger.info("Created Path '/sink'")
@@ -53,9 +53,9 @@ if not os.path.exists(cache_path):
 if not os.path.exists(data_path):
     os.mkdir(data_path)
     logger.info("Created Path '/data'")
-if not os.path.exists(model_path):
-    os.mkdir(model_path)
-    logger.info("Created Path '/model'")
+if not os.path.exists(models_path):
+    os.mkdir(models_path)
+    logger.info("Created Path '/models'")
 
 config = get_config('/../config/collection_config.yaml')
 
