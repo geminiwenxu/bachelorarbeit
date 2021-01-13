@@ -3,9 +3,10 @@ from pkg_resources import resource_filename
 
 
 class Sink:
-    def __init__(self, config) -> None:
+    def __init__(self, config, logger) -> None:
         self.pg_instructions = {'if_exists': 'replace', 'index': False}
         self.file_instructions = config['files']
+        self.logger = logger
 
     def insert_to_disk(self, file_path: str, file_name: str, data: pd.DataFrame) -> None:
         data.to_csv(resource_filename(__name__, file_path) + file_name + ".csv", **self.file_instructions['csv'])

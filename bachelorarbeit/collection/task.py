@@ -573,7 +573,7 @@ class SplitTrainTestGerman(Task):
         for line in self.cache_german:
             self.data = self.data.append(line, ignore_index=True)
         self.train, self.test = train_test_split(self.data, random_state=1, test_size=0.4, stratify=self.data.score)
-        self.validation, self.test = train_test_split(self.data, random_state=1, test_size=0.5, stratify=self.test.score)
+        self.validation, self.test = train_test_split(self.test, random_state=1, test_size=0.5, stratify=self.test.score)
         self.store()
 
     def store(self):

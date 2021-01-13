@@ -38,20 +38,17 @@ log_params = '-'.join(args.strategy)
 # Setup file logging
 log_datetime = datetime.now().isoformat()
 log_path = resource_filename(__name__, '../logs')
-
 if not os.path.exists(log_path):
     os.mkdir(log_path)
-
 file_log_handler = logging.FileHandler(f'{log_path}/{log_datetime}_bert_{log_params}.log')
 logger = logging.getLogger(__name__)
-
 logger.addHandler(file_log_handler)
 logger.setLevel('INFO')
 stderr_log_handler = logging.StreamHandler()
 logger.addHandler(stderr_log_handler)
 
 # nice output format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_log_handler.setFormatter(formatter)
 stderr_log_handler.setFormatter(formatter)
 
@@ -110,12 +107,15 @@ def get_test_data(balanced: bool):
         vali_path = '../../../cache/german_sink_validation_balanced.csv'
         test_path = '../../../cache/german_sink_test_balanced.csv'
         logger.info('Loading Validation and Test Data: "german_sink_test_balanced.csv"')
-        return read_cache(file_path=vali_path), read_cache(file_path=test_path)
     else:
         vali_path = '../../../cache/german_sink_validation.csv'
         test_path = '../../../cache/german_sink_test.csv'
         logger.info('Loading Validation and Test Data: "german_sink_test.csv"')
-        return read_cache(file_path=vali_path), read_cache(file_path=test_path)
+    df_validation = read_cache(file_path=vali_path)
+    df_test = read_cache(file_path=test_path)
+    logger.info(f'Shape of Validation Set with balanced={balanced}: {df_validation.shape}', df_validation.shape)
+    logger.info(f'Shape of Test Set with balanced={balanced}: {df_test.shape}')
+    return df_validation, df_test
 
 
 def main():

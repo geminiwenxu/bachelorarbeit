@@ -7,8 +7,9 @@ from pkg_resources import resource_filename
 
 
 class DataSource:
-    def __init__(self, config):
+    def __init__(self, config, logger):
         self.default_file_path = config['data']['default']
+        self.logger = logger
 
     def get_all_file_paths(self, sub_folder_path):
         base = resource_filename(__name__, self.default_file_path + sub_folder_path)
@@ -238,4 +239,4 @@ class SourceLocalCache(DataSource):
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
                 os.remove(file_path)
-                print(f'Removed: {file_path}')
+                self.logger.info(f'Removed: {file_path}')
