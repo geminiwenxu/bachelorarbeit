@@ -52,56 +52,59 @@ def setup_model(class_names) -> tuple:
 
 
 def main():
-    logger.info(f"Launching bert_runner.py with argparser arguments: {args}")
-    for strategy in args.strategy:
-        logger.info("-------------------------------")
-        logger.info(f"Start to work on model: {strategy} with balanced_training: {args.balanced_training}, and balanced_testing: {args.balanced_testing}, shuffle: {args.shuffle}, epochs: {args.epochs}")
-        logger.info("-------------------------------")
-        if strategy in strategies:
-            df = get_training_data(
-                strategy=strategy,
-                balanced=args.balanced_training
-            )
-            df_validate_ger, df_test_ger = get_test_data(
-                balanced=args.balanced_testing
-            )
-            explore_data(
-                df=df,
-                df_val=df_validate_ger,
-                df_test=df_test_ger,
-                strategy=strategy
-            )
-            train_data_loader, val_data_loader, test_data_loader = preprocess(
-                df_train=df,
-                df_validate=df_validate_ger,
-                df_test=df_test_ger,
-                strategy=strategy,
-                shuffle=args.shuffle,
-                batch_size=32,
-                num_workers=4,
-                logger=logger
-            )
-            model, device = setup_model(class_names)
-            train(
-                model=model,
-                device=device,
-                train_data_loader=train_data_loader,
-                val_data_loader=val_data_loader,
-                training_set=df,
-                validation_set=df_validate_ger,
-                epochs=args.epochs,
-                model_name=strategy
-            )
-            test(
-                df_test=df_test_ger,
-                test_data_loader=test_data_loader,
-                device=device,
-                class_names=class_names,
-                model_name=strategy
-            )
-        else:
-            logger.error(NotImplementedError)
-            raise NotImplementedError
+    try:
+        logger.info(f"Launching bert_runner.py with argparser arguments: {args}")
+        for strategy in args.strategy:
+            logger.info("-------------------------------")
+            logger.info(f"Start to work on model: {strategy} with balanced_training: {args.balanced_training}, and balanced_testing: {args.balanced_testing}, shuffle: {args.shuffle}, epochs: {args.epochs}")
+            logger.info("-------------------------------")
+            if strategy in strategies:
+                df = get_training_data(
+                    strategy=strategy,
+                    balanced=args.balanced_training
+                )
+                df_validate_ger, df_test_ger = get_test_data(
+                    balanced=args.balanced_testing
+                )
+                explore_data(
+                    df=df,
+                    df_val=df_validate_ger,
+                    df_test=df_test_ger,
+                    strategy=strategy
+                )
+                train_data_loader, val_data_loader, test_data_loader = preprocess(
+                    df_train=df,
+                    df_validate=df_validate_ger,
+                    df_test=df_test_ger,
+                    strategy=strategy,
+                    shuffle=args.shuffle,
+                    batch_size=32,
+                    num_workers=4,
+                    logger=logger
+                )
+                model, device = setup_model(class_names)
+                train(
+                    model=model,
+                    device=device,
+                    train_data_loader=train_data_loader,
+                    val_data_loader=val_data_loader,
+                    training_set=df,
+                    validation_set=df_validate_ger,
+                    epochs=args.epochs,
+                    model_name=strategy
+                )
+                test(
+                    df_test=df_test_ger,
+                    test_data_loader=test_data_loader,
+                    device=device,
+                    class_names=class_names,
+                    model_name=strategy
+                )
+            else:
+                logger.error(NotImplementedError)
+                raise NotImplementedError
+    except Exception as e:
+        logger.error(e)
 
 
 if __name__ == "__main__":
