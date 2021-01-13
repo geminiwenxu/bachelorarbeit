@@ -3,9 +3,12 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 import torch
+import pickle
+from datetime import datetime
 from torch import nn
 from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
+from pkg_resources import resource_filename
 
 from bachelorarbeit.model.classifier import SentimentClassifier
 from bachelorarbeit.model.utils.analysis import plot_training_results
@@ -13,9 +16,9 @@ from bachelorarbeit.model.utils.analysis import plot_training_results
 
 # Training starts here ----------------------------------------
 
-
-def setup_training(train_data_loader, model: SentimentClassifier, device: torch.device, epoch: int = 10, learning_rate: float = 2e-5,
+def setup_training(train_data_loader, model: SentimentClassifier, device: torch.device, logger, model_name, epoch: int = 10, learning_rate: float = 2e-5,
                    correct_bias: bool = False, num_warmup_steps: int = 0) -> tuple:
+    logger.info(f"{model_name} --> Setting up training procedure with parameters: epoch: {epoch}, learning_rate: {learning_rate}, correct_bias: {correct_bias}, num_warmup_steps: {num_warmup_steps}")
     optimizer = AdamW(
         model.parameters(),
         lr=learning_rate,
@@ -69,26 +72,31 @@ def eval_model(model, data_loader, loss_fn, device, n_examples):
 
 
 def train(model: SentimentClassifier, device: torch.device, train_data_loader: DataLoader, val_data_loader: DataLoader,
-          training_set: pd.DataFrame, validation_set: pd.DataFrame, epochs: int, model_name: str):
+          training_set: pd.DataFrame, validation_set: pd.DataFrame, epochs: int, model_name: str, logger):
     optimizer, total_steps, scheduler, loss_fn = setup_training(
         model=model,
         train_data_loader=train_data_loader,
         epoch=epochs,
-        device=device
+        device=device,
+        logger=logger,
+        model_name=model_name
     )
-    print('Starting Training Procedure:')
+    logger.info(f"{model_name} --> Starting Training Procedure:")
     history = defaultdict(list)
     best_accuracy = 0
     best_model = object()
     for epoch in range(epochs):
-        print(f'Epoch {epoch + 1}/{epochs}')
-        print('-' * 10)
+        epoch_timer = datetime.now()
+        start_timer = datetime.now()
+        logger.info(f"{model_name} --> Epoch {epoch + 1}/{epochs}")
         train_acc, train_loss = train_epoch(model, train_data_loader, loss_fn, optimizer, device, scheduler,
                                             len(training_set))
-        print(f'Train loss {train_loss} accuracy {train_acc}')
+        logger.info(f"{model_name} --> Training loss: {train_loss} --- accuracy: {train_acc}")
+        logger.info(f"{model_name} --> Validation took: {datetime.now() - start_timer}")
+        start_timer = datetime.now()
         val_acc, val_loss = eval_model(model, val_data_loader, loss_fn, device, len(validation_set))
-        print(f'Val   loss {val_loss} accuracy {val_acc}')
-        print('\n')
+        logger.info(f"{model_name} --> Validation loss: {val_loss} --- accuracy: {val_acc}")
+        logger.info(f"{model_name} --> Validation took: {datetime.now() - start_timer}")
         history['train_acc'].append(train_acc)
         history['train_loss'].append(train_loss)
         history['val_acc'].append(val_acc)
@@ -98,9 +106,13 @@ def train(model: SentimentClassifier, device: torch.device, train_data_loader: D
         if val_acc > best_accuracy:
             best_model = model
             best_accuracy = val_acc
-    print('Training Procedure Complete!')
+        logger.info(f"{model_name} --> Training & Validation of epoch {epoch} took: {datetime.now() - epoch_timer}")
+    logger.info(f"{model_name} --> Training Procedure Complete!")
     plot_training_results(
         history,
         model_name=model_name
     )
+    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.sav')
+    logger.info(f"{model_name} --> Saving optimal model to disk: {filename}")
+    pickle.dump(model, open(filename, 'wb'))
     return best_model

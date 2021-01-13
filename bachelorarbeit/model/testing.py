@@ -1,13 +1,16 @@
 import pandas as pd
 import torch
+import pickle
 import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader
+from pkg_resources import resource_filename
 
 from bachelorarbeit.model.classifier import SentimentClassifier
 from bachelorarbeit.model.training import eval_model
 from bachelorarbeit.model.utils.analysis import plot_confusion_matrix
 from bachelorarbeit.model.utils.analysis import save_test_reports
+
 
 RANDOM_SEED = 42
 
@@ -46,22 +49,27 @@ def get_predictions(best_model: SentimentClassifier, data_loader, device: torch.
     return review_texts, predictions, prediction_probs, actual_values
 
 
-def test(df_test: pd.DataFrame, test_data_loader: DataLoader, best_model: SentimentClassifier, device: torch.device, class_names: list, model_name: str) -> None:
-    print('Starting Test Procedure:')
+def test(df_test: pd.DataFrame, test_data_loader: DataLoader, device: torch.device, class_names: list, model_name: str, logger) -> None:
+    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.sav')
+    logger.info(f"{model_name} --> Loading optimised model from disk: {filename}")
+    best_model = pickle.load(open(filename, 'rb'))
+    logger.info(f"{model_name} --> Starting Test Procedure:")
     test_acc = run_test(model=best_model, df_test=df_test, test_data_loader=test_data_loader, device=device)
     review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model=best_model, data_loader=test_data_loader, device=device)
-    print('Test Procedure Complete:')
+    logger.info(f"{model_name} --> Test Procedure Complete:")
     save_test_reports(test_acc=test_acc,
                       test_input=review_texts,
                       predictions=predictions,
                       prediction_probs=prediction_probs,
                       actual_values=actual_values,
                       class_names=class_names,
-                      model_name=model_name
+                      model_name=model_name,
+                      logger=logger
                       )
     plot_confusion_matrix(real_values=actual_values,
                           predictions=predictions,
                           class_names=class_names,
-                          model_name=model_name
+                          model_name=model_name,
+                          logger=logger
                           )
     return None

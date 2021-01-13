@@ -38,14 +38,14 @@ class BuiltPyTorchDataset(Dataset):
                 'attention_mask': encoding['attention_mask'].flatten(), 'scores': torch.tensor(score, dtype=torch.long)}
 
 
-def split_data(df: pd.DataFrame, random_seed: int, validation_size_ratio: float) -> tuple:
+def split_data(df: pd.DataFrame, random_seed: int, validation_size_ratio: float, logger) -> tuple:
     df_validation, df_test = train_test_split(df,
                                               test_size=1 - validation_size_ratio,
                                               random_state=random_seed,
                                               stratify=df.score
                                               )
-    print('Shape of Validation DataFrame: ', df_validation.shape)
-    print('Shape of Test DataFrame: ', df_test.shape)
+    logger.info('Shape of Validation DataFrame: ', df_validation.shape)
+    logger.info('Shape of Test DataFrame: ', df_test.shape)
     return df_validation, df_test
 
 
@@ -87,10 +87,10 @@ def declare_pytorch_loader(train: pd.DataFrame, validation: pd.DataFrame, test: 
     return train_data_loader, val_data_loader, test_data_loader
 
 
-def preprocess(df_train: pd.DataFrame, df_validate: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shuffle: bool,
+def preprocess(df_train: pd.DataFrame, df_validate: pd.DataFrame, df_test: pd.DataFrame, strategy: str, shuffle: bool, logger,
                batch_size: int = 16, num_workers: int = 4) -> tuple:
     # TODO: get max_len from analyse_sequence .. automatically!
-    print('Setting up Data Processing Pipeline for PyTorch:')
+    logger.info(f'{strategy} --> Setting up Data Processing Pipeline for PyTorch with parameters: shuffle={shuffle}, batch_size={batch_size}, num_workers={num_workers}')
     max_len = analyse_sequence_length(
         df_series=df_train.text,
         tokenizer=tokenizer,

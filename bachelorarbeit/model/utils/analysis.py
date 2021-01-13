@@ -8,17 +8,17 @@ from sklearn.metrics import confusion_matrix, classification_report
 from transformers import BertTokenizer
 
 
-def save_value_count(df: pd.DataFrame, strategy: str, set_: str):
-    print(df[['score', 'language', 'source']].value_counts())
+def save_value_count(df: pd.DataFrame, strategy: str, set_: str, logger):
+    logger.info(f" {strategy} --> {set_}: Value Count of Levels \n{df[['score', 'language', 'source']].value_counts()}")
     df = df[['score', 'language', 'source']].value_counts().reset_index()
     df.to_csv(resource_filename(__name__, f'../../../cache/{strategy}_{set_}_sentiment_count.csv'), sep=';', index_label='index')
     return None
 
 
-def explore_dataframe(df: pd.DataFrame, strategy: str, set_: str):
-    print('Shape of the DataFrame: ', df.shape)
-    print('Memory Consumption of DataFrame in MB:', df.memory_usage(deep=True).sum() / 1000000)
-    save_value_count(df=df, strategy=strategy, set_=set_)
+def explore_dataframe(df: pd.DataFrame, strategy: str, set_: str, logger):
+    logger.info(f'{strategy} --> {set_}: Shape of the DataFrame: ', df.shape)
+    logger.info(f'{strategy} --> {set_}: Memory Consumption of DataFrame in MB:', df.memory_usage(deep=True).sum() / 1000000)
+    save_value_count(df=df, strategy=strategy, set_=set_, logger=logger)
     return None
 
 
@@ -36,21 +36,22 @@ def plot_countplot(df_series: pd.Series, strategy: str, set_: str, class_names=N
     return None
 
 
-def analyse_sentiment(df: pd.DataFrame, strategy: str, set_: str) -> None:
+def analyse_sentiment(df: pd.DataFrame, strategy: str, set_: str, logger) -> None:
     class_names = ['negative', 'neutral', 'positive']
     plot_countplot(df_series=df.score, class_names=class_names, xlabel=f'{strategy} review sentiment',
                    strategy=strategy, set_=set_)
+    logger.info(f'{strategy} --> {set_}: Sentiment Analysis \n{df.shape}')
     return None
 
 
-def explore_data(df: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame, strategy: str) -> None:
-    print('Analysing Training and Test Data:')
-    explore_dataframe(df, strategy, 'train')
-    explore_dataframe(df_val, strategy, 'validation')
-    explore_dataframe(df_test, strategy, 'test')
-    analyse_sentiment(df, strategy, 'train')
-    analyse_sentiment(df_val, strategy, 'validation')
-    analyse_sentiment(df_test, strategy, 'test')
+def explore_data(df: pd.DataFrame, df_val: pd.DataFrame, df_test: pd.DataFrame, strategy: str, logger) -> None:
+    logger.info('Analysing Training and Test Data:')
+    explore_dataframe(df=df, strategy=strategy, set_='train', logger=logger)
+    explore_dataframe(df=df_val, strategy=strategy, set_='validation', logger=logger)
+    explore_dataframe(df=df_test, strategy=strategy, set_='test', logger=logger)
+    analyse_sentiment(df=df, strategy=strategy, set_='train', logger=logger)
+    analyse_sentiment(df=df_val, strategy=strategy, set_='validation', logger=logger)
+    analyse_sentiment(df=df_test, strategy=strategy, set_='test', logger=logger)
     return None
 
 
@@ -141,12 +142,11 @@ def plot_confusion_matrix(real_values: list, predictions: list, class_names: lis
 
 
 def save_test_reports(test_acc: list, test_input: list, predictions: list, prediction_probs: list, actual_values: list,
-                      class_names: list, model_name: str):
-    print('\n---------------------------')
-    print("The accuracy on the test data: ", test_acc)
-    print('\n---------------------------')
-    print(classification_report(actual_values, predictions, target_names=class_names))
-    print('---------------------------\n')
+                      class_names: list, model_name: str, logger):
+    logger.info('---------------------------\n')
+    logger.info(f"{model_name} --> The accuracy on the test data: {test_acc}")
+    logger.info(f"{model_name} --> Classification Report\n{classification_report(actual_values, predictions, target_names=class_names)}")
+    logger.info('---------------------------\n')
     save_classification_report(
         actual_values=actual_values,
         predictions=predictions,
