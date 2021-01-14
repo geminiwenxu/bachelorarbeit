@@ -44,11 +44,11 @@ def get_test_data(balanced: bool):
     if balanced:
         vali_path = '../../../sink/german_sink_validation_balanced.csv'
         test_path = '../../../sink/german_sink_test_balanced.csv'
-        logger.info('Loading Validation and Test Data: "german_sink_test_balanced.csv"')
+        logger.info('Loading Balanced Validation and Test Data.')
     else:
         vali_path = '../../../sink/german_sink_validation.csv'
         test_path = '../../../sink/german_sink_test.csv'
-        logger.info('Loading Validation and Test Data: "german_sink_test.csv"')
+        logger.info('Loading Validation and Test Data.')
     df_validation = read_cache(file_path=vali_path)
     df_test = read_cache(file_path=test_path)
     logger.info(f'Shape of Validation Set with balanced={balanced}: {df_validation.shape}')

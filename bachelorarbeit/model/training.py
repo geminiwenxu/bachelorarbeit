@@ -91,11 +91,11 @@ def train(model: SentimentClassifier, device: torch.device, train_data_loader: D
         train_acc, train_loss = train_epoch(model, train_data_loader, loss_fn, optimizer, device, scheduler,
                                             len(training_set))
         logger.info(f"{model_name} --> Training loss: {train_loss} --- accuracy: {train_acc}")
-        logger.info(f"{model_name} --> Validation took: {datetime.now() - start_timer}")
+        logger.info(f"{model_name} --> Time to complete training: {datetime.now() - start_timer}")
         start_timer = datetime.now()
         val_acc, val_loss = eval_model(model, val_data_loader, loss_fn, device, len(validation_set))
         logger.info(f"{model_name} --> Validation loss: {val_loss} --- accuracy: {val_acc}")
-        logger.info(f"{model_name} --> Validation took: {datetime.now() - start_timer}")
+        logger.info(f"{model_name} --> Time to complete validation: {datetime.now() - start_timer}")
         history['train_acc'].append(train_acc)
         history['train_loss'].append(train_loss)
         history['val_acc'].append(val_acc)
@@ -105,13 +105,13 @@ def train(model: SentimentClassifier, device: torch.device, train_data_loader: D
         if val_acc > best_accuracy:
             best_model = model
             best_accuracy = val_acc
-        logger.info(f"{model_name} --> Training & Validation of epoch {epoch} took: {datetime.now() - epoch_timer}")
+        logger.info(f"{model_name} --> Time to complete training & validation of epoch {epoch}: {datetime.now() - epoch_timer}")
     logger.info(f"{model_name} --> Training Procedure Complete!")
     plot_training_results(
         history,
         model_name=model_name
     )
-    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.bin')
+    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.pth')
     logger.info(f"{model_name} --> Saving optimal model to disk: {filename}")
-    torch.save(model.state_dict(), filename)
+    torch.save(model, filename)
     return best_model

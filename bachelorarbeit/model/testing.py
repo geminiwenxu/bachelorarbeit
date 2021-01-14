@@ -50,11 +50,10 @@ def get_predictions(best_model: SentimentClassifier, data_loader, device: torch.
 
 
 def test(df_test: pd.DataFrame, test_data_loader: DataLoader, device: torch.device, class_names: list, model_name: str) -> None:
-    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.bin')
+    filename = resource_filename(__name__, f'../../models/{model_name}_model_opt.pth')
     logger.info(f"{model_name} --> Loading optimised model from disk: {filename}")
-    model = SentimentClassifier(len(class_names))
-    model.load_state_dict(torch.load(filename))
-    model = model.to(device)
+    model = torch.load(filename)
+    model.eval()
     logger.info(f"{model_name} --> Starting Test Procedure:")
     test_acc = run_test(model=model, df_test=df_test, test_data_loader=test_data_loader, device=device)
     review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model=model, data_loader=test_data_loader, device=device)

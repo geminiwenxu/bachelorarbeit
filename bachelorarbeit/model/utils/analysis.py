@@ -144,10 +144,8 @@ def plot_confusion_matrix(real_values: list, predictions: list, class_names: lis
 
 def save_test_reports(test_acc: list, test_input: list, predictions: list, prediction_probs: list, actual_values: list,
                       class_names: list, model_name: str):
-    logger.info('---------------------------')
     logger.info(f"{model_name} --> The accuracy on the test data: {test_acc}")
     logger.info(f"{model_name} --> Classification Report\n{classification_report(actual_values, predictions, target_names=class_names)}")
-    logger.info('---------------------------')
     save_classification_report(
         actual_values=actual_values,
         predictions=predictions,
