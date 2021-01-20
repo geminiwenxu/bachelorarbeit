@@ -28,8 +28,7 @@ class BuiltPyTorchDataset(Dataset):
             add_special_tokens=True,
             max_length=self.max_len,
             return_token_type_ids=False,
-            padding='max_length',
-            truncation=True,
+            pad_to_max_length=True,
             return_attention_mask=True,
             return_tensors='pt'
         )

@@ -15,8 +15,8 @@ max_len: 256
 epochs: 3
 learning_rate: 2e-5
 num_workers: 4
-correct_bias:
-num_warmup_steps:
+correct_bias: False
+num_warmup_steps: 0
 dropout_ratio: 0.3
 source:
   path: /../../data/
