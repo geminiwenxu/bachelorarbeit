@@ -8,11 +8,11 @@ from pkg_resources import resource_filename
 
 class DataSource:
     def __init__(self, config, logger):
-        self.default_file_path = config['data']['default']
+        self.source_path = config['source']['path']
         self.logger = logger
 
     def get_all_file_paths(self, sub_folder_path):
-        base = resource_filename(__name__, self.default_file_path + sub_folder_path)
+        base = resource_filename(__name__, self.source_path + sub_folder_path)
         out = []
         for path, subdirs, files in os.walk(base):
             for name in files:
@@ -36,13 +36,13 @@ class DataSource:
             return [line for line in file]
 
     def stream_large_txt(self, file_path: str) -> pd.DataFrame:
-        with open(resource_filename(__name__, self.default_file_path + file_path), 'r', encoding="utf8",
+        with open(resource_filename(__name__, self.source_path + file_path), 'r', encoding="utf8",
                   errors='ignore') as infile:
             for line in infile:
                 yield line
 
     def stream_large_csv(self, file_path: str, file_config: dict) -> pd.DataFrame:
-        for chunk in pd.read_csv(resource_filename(__name__, self.default_file_path + file_path), **file_config):
+        for chunk in pd.read_csv(resource_filename(__name__, self.source_path + file_path), **file_config):
             yield chunk
 
 
@@ -146,13 +146,9 @@ class SourceLocalDataGerman(DataSource):
                                                   'names': colnames})
 
     def leipzig_german(self) -> list:
-        # file_path1 = self.sub_folder + 'leipzig/deu-newscrawl-2017-labeled'
         file_path2 = self.sub_folder + 'leipzig/deu-wikipedia-2016-labeled'
-        # file_path3 = self.sub_folder + 'leipzig/deu-mixed-labeled'
         return [
-            # self.stream_large_txt(file_path=file_path1),
             self.stream_large_txt(file_path=file_path2)
-            # self.stream_large_txt(file_path=file_path3)
         ]
 
 
@@ -182,56 +178,48 @@ class SourceLocalDataChinese(DataSource):
 class SourceLocalSink(DataSource):
     sub_folder = "../sink/"
     colnames = ['score', 'text', 'language', 'source']
+    chunksize = 100000
+    sep = ';'
+    header = 0
+
+    def load(self, file):
+        return self.stream_large_csv(file_path=self.sub_folder + file,
+                                     file_config={
+                                         'header': self.header,
+                                         'chunksize': self.chunksize,
+                                         'sep': self.sep,
+                                         'names': self.colnames
+                                     })
 
     def sink_english(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'english_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='english_sink.csv')
 
     def sink_arabic(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'arabic_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='arabic_sink.csv')
 
     def sink_german(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'german_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='german_sink.csv')
 
     def sink_german_train(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'german_sink_train.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='german_sink_train.csv')
 
     def sink_german_test(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'german_sink_test.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='german_sink_test.csv')
 
     def sink_german_validation(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'german_sink_validation.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='german_sink_validation.csv')
 
     def sink_polish(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'polish_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='polish_sink.csv')
 
     def sink_chinese(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'chinese_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='chinese_sink.csv')
 
     def sink_multi_lang(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'multi_lang_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='multi_lang_sink.csv')
 
     def sink_multi_lang_noger(self) -> pd.DataFrame:
-        file_path = self.sub_folder + 'multi_lang_noger_sink.csv'
-        return self.stream_large_csv(file_path=file_path,
-                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ';', 'names': self.colnames})
+        return self.load(file='multi_lang_noger_sink.csv')
 
     def clear_sink(self):
         substrings = ['.csv']

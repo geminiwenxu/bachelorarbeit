@@ -557,12 +557,15 @@ class ComputeChineseDouBan(Task):
 
 
 class SplitTrainTestGerman(Task):
-    def __init__(self, sourceA, sinkA):
+    def __init__(self, sourceA, sinkA, random_seed: int, train_set_size: int, test_set_size: int):
         self.sourceLocalSink = sourceA
         self.sinkLocal = sinkA
         self.train_name = 'german_sink_train'
         self.test_name = 'german_sink_test'
         self.validation_name = 'german_sink_validation'
+        self.random_seed = random_seed
+        self.train_set_size = train_set_size
+        self.test_set_size = test_set_size
         super().__init__()
 
     def extract(self):
@@ -572,8 +575,8 @@ class SplitTrainTestGerman(Task):
         self.data = pd.DataFrame()
         for line in self.sink_german:
             self.data = self.data.append(line, ignore_index=True)
-        self.train, self.test = train_test_split(self.data, random_state=1, test_size=0.4, stratify=self.data.score)
-        self.validation, self.test = train_test_split(self.test, random_state=1, test_size=0.5, stratify=self.test.score)
+        self.train, self.test = train_test_split(self.data, random_state=self.random_seed, test_size=(1 - self.train_set_size), stratify=self.data.score)
+        self.validation, self.test = train_test_split(self.test, random_state=self.random_seed, test_size=self.test_set_size, stratify=self.test.score)
         self.store()
 
     def store(self):
@@ -588,6 +591,7 @@ class ShuffleLanguages(Task):
         self.sinkLocal = sinkA
         self.target_name = 'multi_lang_sink'
         self.target_name_ng = 'multi_lang_noger_sink'
+        self.frac = 1
         super().__init__()
 
     def extract(self):
@@ -606,8 +610,8 @@ class ShuffleLanguages(Task):
             for line in data:
                 self.data = self.data.append(line, ignore_index=True)
         self.data_ng = self.data[self.data['language'] != 'german'].copy()
-        self.data = self.data.sample(frac=1).reset_index(drop=True)
-        self.data_ng = self.data_ng.sample(frac=1).reset_index(drop=True)
+        self.data = self.data.sample(frac=self.frac).reset_index(drop=True)
+        self.data_ng = self.data_ng.sample(frac=self.frac).reset_index(drop=True)
         self.store()
 
     def store(self):
@@ -616,9 +620,11 @@ class ShuffleLanguages(Task):
 
 
 class ComputeDownSampleLanguages(Task):
-    def __init__(self, sourceA, sinkA):
+    def __init__(self, sourceA, sinkA, random_seed):
         self.sourceLocalSink = sourceA
         self.sinkLocal = sinkA
+        self.random_seed = random_seed
+        self.frac = 1
         super().__init__()
 
     def extract(self):
@@ -644,10 +650,10 @@ class ComputeDownSampleLanguages(Task):
                     class_sample = chunk[chunk.iloc[:, 0] == class_index]
                     if 0 < min_class_size < class_sample.shape[0]:
                         class_sample = sklearn.utils.resample(class_sample, replace=False, n_samples=min_class_size,
-                                                              random_state=11)
+                                                              random_state=self.random_seed)
                     samples.append(class_sample)
                 samples = pd.concat(samples)
-                samples = samples.sample(frac=1).reset_index(drop=True)
+                samples = samples.sample(frac=self.frac).reset_index(drop=True)
                 self.data = self.data.append(samples, ignore_index=True)
             self.store()
 

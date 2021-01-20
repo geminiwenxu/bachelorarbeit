@@ -21,29 +21,35 @@ def get_config(path: str) -> dict:
     return conf
 
 
+config = get_config('/../config/collection_config.yaml')
+RANDOM_SEED = config['random_seed']
+TRAIN_SET_SIZE = config['train_set_size']
+TEST_SET_SIZE = config['test_set_size']
+
 # Setup file logging
 log_datetime = datetime.now().isoformat()
-log_path = resource_filename(__name__, '../logs')
+log_path = resource_filename(__name__, config['logs']['path'])
 if not os.path.exists(log_path):
     os.mkdir(log_path)
 file_log_handler = logging.FileHandler(f"{log_path}/{log_datetime}_collection.log")
 logger = logging.getLogger(__name__)
 logger.addHandler(file_log_handler)
-logger.setLevel('INFO')
+logger.setLevel(config['logs']['level'])
 stderr_log_handler = logging.StreamHandler()
 logger.addHandler(stderr_log_handler)
 
 # nice output format
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+pretty_format = '%(asctime)s - %(levelname)s - %(message)s'
+formatter = logging.Formatter(pretty_format)
 file_log_handler.setFormatter(formatter)
 stderr_log_handler.setFormatter(formatter)
 
 
 # Setup project structure
-sink_path = resource_filename(__name__, '../sink')
-cache_path = resource_filename(__name__, '../cache')
-data_path = resource_filename(__name__, '../data')
-models_path = resource_filename(__name__, '../models')
+sink_path = resource_filename(__name__, config['sink']['default'])
+cache_path = resource_filename(__name__, config['sink']['default'])
+data_path = resource_filename(__name__, config['sink']['default'])
+models_path = resource_filename(__name__, config['sink']['default'])
 if not os.path.exists(sink_path):
     os.mkdir(sink_path)
     logger.info("Created Path '/sink'")
@@ -56,8 +62,6 @@ if not os.path.exists(data_path):
 if not os.path.exists(models_path):
     os.mkdir(models_path)
     logger.info("Created Path '/models'")
-
-config = get_config('/../config/collection_config.yaml')
 
 localSink = LocalSink(config, logger)
 sourceLocalDataEnglish = SourceLocalDataEnglish(config, logger)
@@ -83,9 +87,9 @@ tasks = [
     ComputeGermanFilmStarts(sourceLocalDataGerman, localSink),
     ComputePolishPolEmo(sourceLocalDataPolish, localSink),
     ComputeChineseDouBan(sourceLocalDataChinese, localSink),
-    SplitTrainTestGerman(sourceLocalSink, localSink),
+    SplitTrainTestGerman(sourceLocalSink, localSink, RANDOM_SEED, TRAIN_SET_SIZE, TEST_SET_SIZE),
     ShuffleLanguages(sourceLocalSink, localSink),
-    ComputeDownSampleLanguages(sourceLocalSink, localSink)
+    ComputeDownSampleLanguages(sourceLocalSink, localSink, RANDOM_SEED)
 ]
 
 
