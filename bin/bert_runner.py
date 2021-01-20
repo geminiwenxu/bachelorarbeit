@@ -57,7 +57,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--shuffle",
-    default=False,
+    default=config['shuffle'],
     action="store_true",
     help="If turn on the shuffle"
 )

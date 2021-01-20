@@ -13,11 +13,12 @@ pre_trained_model_name: bert-base-multilingual-cased
 batch_size: 32
 max_len: 256
 epochs: 3
-learning_rate: 2e-5
+learning_rate: 0.00002
 num_workers: 4
 correct_bias: False
 num_warmup_steps: 0
 dropout_ratio: 0.3
+shuffle: True
 source:
   path: /../../data/
 sink:

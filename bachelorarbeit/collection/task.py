@@ -575,8 +575,18 @@ class SplitTrainTestGerman(Task):
         self.data = pd.DataFrame()
         for line in self.sink_german:
             self.data = self.data.append(line, ignore_index=True)
-        self.train, self.test = train_test_split(self.data, random_state=self.random_seed, test_size=(1 - self.train_set_size), stratify=self.data.score)
-        self.validation, self.test = train_test_split(self.test, random_state=self.random_seed, test_size=self.test_set_size, stratify=self.test.score)
+        self.train, self.test = train_test_split(
+            self.data,
+            random_state=self.random_seed,
+            test_size=(1 - self.train_set_size),
+            stratify=self.data.score
+        )
+        self.validation, self.test = train_test_split(
+            self.test,
+            random_state=self.random_seed,
+            test_size=self.test_set_size,
+            stratify=self.test.score
+        )
         self.store()
 
     def store(self):

@@ -60,10 +60,11 @@ def test(df_test: pd.DataFrame, test_data_loader: DataLoader, device: torch.devi
                         test_data_loader=test_data_loader,
                         device=device
                         )
-    review_texts, predictions, prediction_probs, actual_values = get_predictions(best_model=model,
-                                                                                 data_loader=test_data_loader,
-                                                                                 device=device
-                                                                                 )
+    review_texts, predictions, prediction_probs, actual_values = get_predictions(
+        best_model=model,
+        data_loader=test_data_loader,
+        device=device
+    )
     logger.info(f"{model_name} --> Test Procedure Complete:")
     save_test_reports(test_acc=test_acc,
                       test_input=review_texts,
