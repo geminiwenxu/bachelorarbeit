@@ -21,7 +21,7 @@ def get_config(path: str) -> dict:
     return conf
 
 
-config = get_config('/../config/collection_config.yaml')
+config = get_config('/../config/config.yaml')
 RANDOM_SEED = config['random_seed']
 TRAIN_SET_SIZE = config['train_set_size']
 TEST_SET_SIZE = config['test_set_size']

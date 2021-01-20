@@ -70,15 +70,14 @@ def plot_distribution(series: list, strategy: str, xlim: list = None, xlabel: st
     return None
 
 
-def analyse_sequence_length(df_series: pd.Series, tokenizer: BertTokenizer, strategy: str) -> int:
+def analyse_sequence_length(df_series: pd.Series, tokenizer: BertTokenizer, strategy: str, max_token_lengths: int) -> int:
     # TODO: analyse max_len and use later in create_data_loader
     token_lens = []
-    # use df.text here:
     for txt in df_series:
-        tokens = tokenizer.encode(txt, max_length=256)
+        tokens = tokenizer.encode(txt, max_length=max_token_lengths)
         token_lens.append(len(tokens))
-    plot_distribution(token_lens, xlim=[0, 256], xlabel=f'{strategy}Token count', strategy=strategy)
-    max_len = 256
+    plot_distribution(token_lens, xlim=[0, max_token_lengths], xlabel=f'{strategy}Token count', strategy=strategy)
+    max_len = max_token_lengths
     return max_len
 
 
