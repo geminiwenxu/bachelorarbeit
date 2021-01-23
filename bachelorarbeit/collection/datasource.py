@@ -7,6 +7,8 @@ from pkg_resources import resource_filename
 
 
 class DataSource:
+    colnames = ['score', 'text']
+
     def __init__(self, config, logger):
         self.source_path = config['source']['path']
         self.logger = logger
@@ -29,7 +31,8 @@ class DataSource:
         return dictionary
 
     def get_json(self, file_path: str) -> dict:
-        return json.loads(file_path)
+        with open(file_path, encoding='utf-8', errors='ignore') as json_data:
+            return json.load(json_data, strict=False)
 
     def get_text(self, file_path: str) -> list:
         with open(file_path, 'r') as file:
@@ -90,8 +93,7 @@ class SourceLocalDataGerman(DataSource):
     def scare_german(self) -> pd.DataFrame:
         source_path = 'scare/'
         substrings = ['.csv']
-        colnames = ['score', 'text']
-        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 3]}
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': self.colnames, 'header': None, 'usecols': [1, 3]}
         files = self.get_all_file_paths(self.sub_folder + source_path)
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
@@ -100,8 +102,7 @@ class SourceLocalDataGerman(DataSource):
     def potts_german(self) -> pd.DataFrame:
         source_path = 'PotTS/preprocessed-no-noise-cleaner/'
         substrings = ['.tsv']
-        colnames = ['score', 'text']
-        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 2]}
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': self.colnames, 'header': None, 'usecols': [1, 2]}
         files = self.get_all_file_paths(self.sub_folder + source_path)
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
@@ -110,8 +111,7 @@ class SourceLocalDataGerman(DataSource):
     def sb_german(self) -> pd.DataFrame:
         source_path = 'SB10K/preprocessed/'
         substrings = ['.tsv']
-        colnames = ['score', 'text']
-        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 2]}
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': self.colnames, 'header': None, 'usecols': [1, 2]}
         files = self.get_all_file_paths(self.sub_folder + source_path)
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
@@ -120,8 +120,7 @@ class SourceLocalDataGerman(DataSource):
     def germeval(self) -> pd.DataFrame:
         source_path = 'germeval2017/'
         substrings = ['.tsv']
-        colnames = ['text', 'score']
-        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': 0, 'usecols': [3, 1]}
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': self.colnames, 'header': 0, 'usecols': [3, 1]}
         files = self.get_all_file_paths(self.sub_folder + source_path)
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
@@ -130,8 +129,7 @@ class SourceLocalDataGerman(DataSource):
     def filmstarts_german(self) -> pd.DataFrame:
         source_path = 'filmstarts/'
         substrings = ['.tsv']
-        colnames = ['score', 'text']
-        file_config = {'sep': '\t', 'parse_dates': True, 'names': colnames, 'header': None, 'usecols': [1, 2]}
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': self.colnames, 'header': None, 'usecols': [1, 2]}
         files = self.get_all_file_paths(self.sub_folder + source_path)
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
@@ -139,11 +137,10 @@ class SourceLocalDataGerman(DataSource):
 
     def holidaycheck_german(self) -> pd.DataFrame:
         source_path = 'holidaycheck/'
-        colnames = ['score', 'text']
         file_path = self.sub_folder + source_path + 'holidaycheck.clean.filtered.tsv'
         return self.stream_large_csv(file_path=file_path,
                                      file_config={'header': 0, 'chunksize': 100000, 'sep': '\t', 'usecols': [0, 1],
-                                                  'names': colnames})
+                                                  'names': self.colnames})
 
     def leipzig_german(self) -> list:
         file_path2 = self.sub_folder + 'leipzig/deu-wikipedia-2016-labeled'
@@ -168,11 +165,44 @@ class SourceLocalDataChinese(DataSource):
     sub_folder = "chinese/"
 
     def douban_movies(self) -> pd.DataFrame:
-        colnames = ['score', 'text']
-        file_path = self.sub_folder + 'douban/ratings.csv'
-        return self.stream_large_csv(file_path=file_path,
+        return self.stream_large_csv(file_path=self.sub_folder + 'douban/ratings.csv',
                                      file_config={'header': 0, 'chunksize': 100000, 'sep': ',', 'usecols': [2, 4],
-                                                  'names': colnames})
+                                                  'names': self.colnames})
+
+
+class SourceLocalDataFrench(DataSource):
+    sub_folder = "french/"
+
+    def kaggle(self) -> pd.DataFrame:
+        return self.stream_large_csv(file_path=self.sub_folder + 'french_tweets.csv',
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ',', 'names': self.colnames})
+
+
+class SourceLocalDataDutch(DataSource):
+    sub_folder = "dutch/"
+
+    def social_media_collection(self) -> tuple:
+        substrings = ['.json']
+        files = self.get_all_file_paths(self.sub_folder + 'DutchSocialMediaCollection/')
+        for file_name, file_path in files:
+            if all([substring in file_name for substring in substrings]):
+                yield file_name, self.get_json(file_path=file_path)
+
+    def book_reviews(self) -> pd.DataFrame:
+        folder = 'DutchBookReviewsDataset/'
+        file_neg = 'dutch_book_review_neg.csv'
+        file_pos = 'dutch_book_review_pos.csv'
+        neg = self.get_csv(
+            file_path=resource_filename(__name__, self.source_path + self.sub_folder + folder + file_neg),
+            file_config={'header': None, 'sep': ';', 'names': ['text'], 'skip_blank_lines': True})
+        neg['score'] = 0
+        neg = neg[['score', 'text']]
+        pos = self.get_csv(
+            file_path=resource_filename(__name__, self.source_path + self.sub_folder + folder + file_pos),
+            file_config={'header': None, 'sep': ';', 'names': ['text'], 'skip_blank_lines': True})
+        pos['score'] = 2
+        pos = pos[['score', 'text']]
+        return neg.append(pos, ignore_index=True, sort=False)
 
 
 class SourceLocalSink(DataSource):
@@ -214,6 +244,12 @@ class SourceLocalSink(DataSource):
 
     def sink_chinese(self) -> pd.DataFrame:
         return self.load(file='chinese_sink.csv')
+
+    def sink_french(self) -> pd.DataFrame:
+        return self.load(file='french_sink.csv')
+
+    def sink_dutch(self) -> pd.DataFrame:
+        return self.load(file='dutch_sink.csv')
 
     def sink_multi_lang(self) -> pd.DataFrame:
         return self.load(file='multi_lang_sink.csv')

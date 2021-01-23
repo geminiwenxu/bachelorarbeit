@@ -6,13 +6,13 @@ from datetime import datetime
 from pkg_resources import resource_filename
 
 from bachelorarbeit.collection.datasource import SourceLocalDataEnglish, SourceLocalDataArabic, SourceLocalDataGerman, \
-    SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalSink
+    SourceLocalDataPolish, SourceLocalDataChinese, SourceLocalSink, SourceLocalDataFrench, SourceLocalDataDutch
 from bachelorarbeit.collection.sink import LocalSink
 from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglishAmazonMovieReview, \
     ComputeEnglishWebisTripad, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
     ClearLocalSink, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
     ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB, \
-    ComputeDownSampleLanguages
+    ComputeDownSampleLanguages, ComputeFrenchKaggle, ComputeDutchSocialMedia, ComputeDutchBookReviews
 
 
 def get_config(path: str) -> dict:
@@ -69,6 +69,8 @@ sourceLocalDataArabic = SourceLocalDataArabic(config, logger)
 sourceLocalDataGerman = SourceLocalDataGerman(config, logger)
 sourceLocalDataPolish = SourceLocalDataPolish(config, logger)
 sourceLocalDataChinese = SourceLocalDataChinese(config, logger)
+sourceLocalDataFrench = SourceLocalDataFrench(config, logger)
+sourceLocalDataDutch = SourceLocalDataDutch(config, logger)
 sourceLocalSink = SourceLocalSink(config, logger)
 
 # Pipeline of tasks:
@@ -87,6 +89,9 @@ tasks = [
     ComputeGermanFilmStarts(sourceLocalDataGerman, localSink),
     ComputePolishPolEmo(sourceLocalDataPolish, localSink),
     ComputeChineseDouBan(sourceLocalDataChinese, localSink),
+    ComputeFrenchKaggle(sourceLocalDataFrench, localSink),
+    ComputeDutchSocialMedia(sourceLocalDataDutch, localSink),
+    ComputeDutchBookReviews(sourceLocalDataDutch, localSink),
     SplitTrainTestGerman(sourceLocalSink, localSink, RANDOM_SEED, TRAIN_SET_SIZE, TEST_SET_SIZE),
     ShuffleLanguages(sourceLocalSink, localSink),
     ComputeDownSampleLanguages(sourceLocalSink, localSink, RANDOM_SEED)

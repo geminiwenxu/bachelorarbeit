@@ -1,7 +1,7 @@
 import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
-
+import re
 
 class Task:
     def __init__(self, *args, **kwargs):
@@ -556,6 +556,111 @@ class ComputeChineseDouBan(Task):
         self.sinkLocal.insert(self.target_name, self.data)
 
 
+class ComputeFrenchKaggle(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataFrench = sourceA
+        self.sinkLocal = sinkA
+        self.source = 'Kaggle'
+        self.language = 'french'
+        self.target_name = 'french_sink'
+        super().__init__()
+
+    def normalise_score(self):
+        def change_score(score):
+            if score in ['1', 1]:
+                score = 2
+            else:
+                score = 0
+            return score
+
+        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+
+    def extract(self):
+        self.kaggle = self.sourceLocalDataFrench.kaggle()
+
+    def transform(self):
+        for data in self.kaggle:
+            self.data = data
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.normalise_score()
+            self.store()
+
+    def store(self):
+        self.sinkLocal.insert(self.target_name, self.data)
+
+
+class ComputeDutchSocialMedia(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataDutch = sourceA
+        self.sinkLocal = sinkA
+        self.source = 'SocialMediaKaggle'
+        self.language = 'dutch'
+        self.target_name = 'dutch_sink'
+        super().__init__()
+
+    @staticmethod
+    def change_score(score):
+        if score < -0.5:
+            score = 0
+        elif score > 0.5:
+            score = 2
+        else:
+            score = 1
+        return score
+
+    def extract(self):
+        self.social_media_collection = self.sourceLocalDataDutch.social_media_collection()
+
+    @staticmethod
+    def clean_text(text):
+        if text:
+            text = re.sub(r"^https://t.co/[a-zA-Z0-9]*\s", "", text)
+            text = re.sub(r"\s+https://t.co/[a-zA-Z0-9]*\s", "", text)
+            text = re.sub(r"\s+https://t.co/[a-zA-Z0-9]*$", "", text)
+            text = re.sub(r"(@[A-Za-z0-9]+)|(\w+:\/\/\S+)", "", text)
+            text = re.sub(r"RT : ", "", text)
+        return text
+
+    def transform(self):
+        for file, data in self.social_media_collection:
+            self.data = []
+            for ele in data:
+                element = dict()
+                element['score'] = ele['sentiment_pattern']
+                element['text'] = self.clean_text(ele['full_text'])
+                element['language'] = self.language
+                element['source'] = self.source
+                self.data.append(element)
+            self.data = pd.DataFrame(self.data)
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
+            self.store()
+
+    def store(self):
+        self.sinkLocal.insert(self.target_name, self.data)
+
+
+class ComputeDutchBookReviews(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataDutch = sourceA
+        self.sinkLocal = sinkA
+        self.source = 'BookReviews'
+        self.language = 'dutch'
+        self.target_name = 'dutch_sink'
+        super().__init__()
+
+    def extract(self):
+        self.book_reviews = self.sourceLocalDataDutch.book_reviews()
+
+    def transform(self):
+        self.book_reviews['language'] = self.language
+        self.book_reviews['source'] = self.source
+        self.store()
+
+    def store(self):
+        self.sinkLocal.insert(self.target_name, self.book_reviews)
+
+
 class SplitTrainTestGerman(Task):
     def __init__(self, sourceA, sinkA, random_seed: int, train_set_size: int, test_set_size: int):
         self.sourceLocalSink = sourceA
@@ -610,13 +715,15 @@ class ShuffleLanguages(Task):
         self.sink_german_train = self.sourceLocalSink.sink_german_train()
         self.sink_polish = self.sourceLocalSink.sink_polish()
         self.sink_chinese = self.sourceLocalSink.sink_chinese()
+        self.sink_french = self.sourceLocalSink.sink_french()
+        self.sink_dutch = self.sourceLocalSink.sink_dutch()
 
     def transform(self):
         self.data = pd.DataFrame()
         self.data_ng = pd.DataFrame()
         for lang, data in [('english', self.sink_english), ('arabic', self.sink_arabic),
                            ('german', self.sink_german_train), ('polish', self.sink_polish),
-                           ('chinese', self.sink_chinese)]:
+                           ('chinese', self.sink_chinese), ('french', self.sink_french), ('dutch', self.sink_dutch)]:
             for line in data:
                 self.data = self.data.append(line, ignore_index=True)
         self.data_ng = self.data[self.data['language'] != 'german'].copy()
