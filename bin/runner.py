@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-import yaml
-import os
 import logging
+import os
 from datetime import datetime
+
+import yaml
 from pkg_resources import resource_filename
 
 from bachelorarbeit.collection.datasource import SourceLocalDataEnglish, SourceLocalDataArabic, SourceLocalDataGerman, \
@@ -12,7 +13,8 @@ from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglish
     ComputeEnglishWebisTripad, ComputeArabicSemEval, ComputeGermanScare, ComputePolishPolEmo, \
     ClearLocalSink, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
     ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB, \
-    ComputeDownSampleLanguages, ComputeFrenchKaggle, ComputeDutchSocialMedia, ComputeDutchBookReviews
+    ComputeDownSampleLanguages, ComputeFrenchKaggle, ComputeDutchSocialMedia, ComputeDutchBookReviews, \
+    ComputeFrenchBetsentimentWorldCup, ComputeFrenchBetsentimentTeams
 
 
 def get_config(path: str) -> dict:
@@ -43,7 +45,6 @@ pretty_format = '%(asctime)s - %(levelname)s - %(message)s'
 formatter = logging.Formatter(pretty_format)
 file_log_handler.setFormatter(formatter)
 stderr_log_handler.setFormatter(formatter)
-
 
 # Setup project structure
 sink_path = resource_filename(__name__, config['sink']['default'])
@@ -90,6 +91,8 @@ tasks = [
     ComputePolishPolEmo(sourceLocalDataPolish, localSink),
     ComputeChineseDouBan(sourceLocalDataChinese, localSink),
     ComputeFrenchKaggle(sourceLocalDataFrench, localSink),
+    ComputeFrenchBetsentimentTeams(sourceLocalDataFrench, localSink),
+    ComputeFrenchBetsentimentWorldCup(sourceLocalDataFrench, localSink),
     ComputeDutchSocialMedia(sourceLocalDataDutch, localSink),
     ComputeDutchBookReviews(sourceLocalDataDutch, localSink),
     SplitTrainTestGerman(sourceLocalSink, localSink, RANDOM_SEED, TRAIN_SET_SIZE, TEST_SET_SIZE),
@@ -100,7 +103,7 @@ tasks = [
 
 def main():
     for idx, task in enumerate(tasks):
-        logger.info(f"Performing Collection Task '{idx+1} of {len(tasks)}': {task}")
+        logger.info(f"Performing Collection Task '{idx + 1} of {len(tasks)}': {task}")
         try:
             task.extract()
             task.transform()

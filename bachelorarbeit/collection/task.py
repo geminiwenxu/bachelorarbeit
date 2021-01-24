@@ -178,17 +178,15 @@ class ComputeArabicSemEval(Task):
             cols = [0]
         self.data.drop(self.data.columns[cols], axis=1, inplace=True)
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['negative', '-1', -1, -2]:
-                score = 0
-            elif score in ['positive', '1', 1, 2]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['negative', '-1', -1, -2]:
+            score = 0
+        elif score in ['positive', '1', 1, 2]:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.semeval_arabic = self.sourceLocalDataArabic.semeval_arabic()
@@ -200,7 +198,7 @@ class ComputeArabicSemEval(Task):
             self.data.columns = ['score', 'text']
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -216,17 +214,15 @@ class ComputeGermanScare(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['1', '2', 1, 2]:
-                score = 0
-            elif score in ['4', '5', 4, 5]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['1', '2', 1, 2]:
+            score = 0
+        elif score in ['4', '5', 4, 5]:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.scare_german = self.sourceLocalDataGerman.scare_german()
@@ -236,7 +232,7 @@ class ComputeGermanScare(Task):
             self.data = data
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -252,17 +248,15 @@ class ComputeGermanPotts(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['negative', -1]:
-                score = 0
-            elif score in ['positive', 1]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['negative', -1]:
+            score = 0
+        elif score in ['positive', 1]:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.potts_german = self.sourceLocalDataGerman.potts_german()
@@ -272,7 +266,7 @@ class ComputeGermanPotts(Task):
             self.data = data
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -288,17 +282,15 @@ class ComputeGermanSB(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['negative', -1]:
-                score = 0
-            elif score in ['positive', 1]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['negative', -1]:
+            score = 0
+        elif score in ['positive', 1]:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.sb_german = self.sourceLocalDataGerman.sb_german()
@@ -308,7 +300,7 @@ class ComputeGermanSB(Task):
             self.data = data
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -324,17 +316,15 @@ class ComputeGermanEval(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['negative']:
-                score = 0
-            elif score in ['positive']:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['negative']:
+            score = 0
+        elif score in ['positive']:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.germeval = self.sourceLocalDataGerman.germeval()
@@ -342,9 +332,10 @@ class ComputeGermanEval(Task):
     def transform(self):
         for file, data in self.germeval:
             self.data = data
+            self.data = self.data[['score', 'text']]
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             columnsTitles = ['score', 'text', 'language', 'source']
             self.data = self.data.reindex(columns=columnsTitles)
             self.store()
@@ -362,17 +353,15 @@ class ComputeGermanFilmStarts(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in [1.0, 2.0, 1, 2]:
-                score = 0
-            elif score in [4.0, 5.0, 4, 5]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in [1.0, 2.0, 1, 2]:
+            score = 0
+        elif score in [4.0, 5.0, 4, 5]:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.filmstarts_german = self.sourceLocalDataGerman.filmstarts_german()
@@ -382,7 +371,7 @@ class ComputeGermanFilmStarts(Task):
             self.data = data
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -398,17 +387,15 @@ class ComputeGermanHolidaycheck(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['1', '2', 1, 2]:
-                score = 0
-            elif score in ['5', 5, '4', 4]:
-                score = 2
-            else:
-                score = 1
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['1', '2', 1, 2]:
+            score = 0
+        elif score in ['5', 5, '4', 4]:
+            score = 2
+        else:
+            score = 1
+        return score
 
     def extract(self):
         self.holidaycheck_german = self.sourceLocalDataGerman.holidaycheck_german()
@@ -418,7 +405,7 @@ class ComputeGermanHolidaycheck(Task):
             self.data = data
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -434,15 +421,13 @@ class ComputeGermanLeipzig(Task):
         self.target_name = 'german_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['__label__neutral']:
-                score = 1
-            else:
-                raise NotImplementedError
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['__label__neutral']:
+            score = 1
+        else:
+            raise NotImplementedError
+        return score
 
     def extract(self):
         self.leipzig_german = self.sourceLocalDataGerman.leipzig_german()
@@ -464,12 +449,12 @@ class ComputeGermanLeipzig(Task):
                 self.data.append(dl)
                 if counter % 10000 == 0 and counter != 0:
                     self.data = pd.DataFrame(self.data)
-                    self.normalise_score()
+                    self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
                     self.store()
                     self.data = []
                 counter += 1
         self.data = pd.DataFrame(self.data)
-        self.normalise_score()
+        self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
         self.store()
 
     def store(self):
@@ -565,15 +550,13 @@ class ComputeFrenchKaggle(Task):
         self.target_name = 'french_sink'
         super().__init__()
 
-    def normalise_score(self):
-        def change_score(score):
-            if score in ['1', 1]:
-                score = 2
-            else:
-                score = 0
-            return score
-
-        self.data['score'] = self.data['score'].apply(lambda x: change_score(x))
+    @staticmethod
+    def change_score(score):
+        if score in ['1', 1]:
+            score = 2
+        else:
+            score = 0
+        return score
 
     def extract(self):
         self.kaggle = self.sourceLocalDataFrench.kaggle()
@@ -583,7 +566,77 @@ class ComputeFrenchKaggle(Task):
             self.data = data
             self.data['language'] = self.language
             self.data['source'] = self.source
-            self.normalise_score()
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
+            self.store()
+
+    def store(self):
+        self.sinkLocal.insert(self.target_name, self.data)
+
+
+class ComputeFrenchBetsentimentTeams(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataFrench = sourceA
+        self.sinkLocal = sinkA
+        self.source = 'Betsentiment_teams'
+        self.language = 'french'
+        self.target_name = 'french_sink'
+        super().__init__()
+
+    @staticmethod
+    def change_score(score):
+        if score == 'POSITIVE':
+            score = 2
+        elif score == 'NEGATIVE':
+            score = 0
+        else:
+            score = 1
+        return score
+
+    def extract(self):
+        self.betsentiment_teams = self.sourceLocalDataFrench.betsentiment_teams()
+
+    def transform(self):
+        for data in self.betsentiment_teams:
+            self.data = data
+            self.data = self.data[['score', 'text']]
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
+            self.store()
+
+    def store(self):
+        self.sinkLocal.insert(self.target_name, self.data)
+
+
+class ComputeFrenchBetsentimentWorldCup(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalDataFrench = sourceA
+        self.sinkLocal = sinkA
+        self.source = 'Betsentiment_worldcup'
+        self.language = 'french'
+        self.target_name = 'french_sink'
+        super().__init__()
+
+    @staticmethod
+    def change_score(score):
+        if score == 'POSITIVE':
+            score = 2
+        elif score == 'NEGATIVE':
+            score = 0
+        else:
+            score = 1
+        return score
+
+    def extract(self):
+        self.betsentiment_worldcup = self.sourceLocalDataFrench.betsentiment_worldcup()
+
+    def transform(self):
+        for data in self.betsentiment_worldcup:
+            self.data = data
+            self.data = self.data[['score', 'text']]
+            self.data['language'] = self.language
+            self.data['source'] = self.source
+            self.data['score'] = self.data['score'].apply(lambda x: self.change_score(x))
             self.store()
 
     def store(self):
@@ -618,7 +671,7 @@ class ComputeDutchSocialMedia(Task):
             text = re.sub(r"^https://t.co/[a-zA-Z0-9]*\s", "", text)
             text = re.sub(r"\s+https://t.co/[a-zA-Z0-9]*\s", "", text)
             text = re.sub(r"\s+https://t.co/[a-zA-Z0-9]*$", "", text)
-            text = re.sub(r"(@[A-Za-z0-9]+)|(\w+:\/\/\S+)", "", text)
+            # text = re.sub(r"(@[A-Za-z0-9]+)|(\w+:\/\/\S+)", "", text)
             text = re.sub(r"RT : ", "", text)
         return text
 

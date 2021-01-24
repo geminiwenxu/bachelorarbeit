@@ -120,7 +120,7 @@ class SourceLocalDataGerman(DataSource):
     def germeval(self) -> pd.DataFrame:
         source_path = 'germeval2017/'
         substrings = ['.tsv']
-        file_config = {'sep': '\t', 'parse_dates': True, 'names': self.colnames, 'header': 0, 'usecols': [3, 1]}
+        file_config = {'sep': '\t', 'parse_dates': True, 'names': ['text', 'score'], 'header': 0, 'usecols': [1, 3]}
         files = self.get_all_file_paths(self.sub_folder + source_path)
         for file_name, file_path in files:
             if all([substring in file_name for substring in substrings]):
@@ -176,6 +176,16 @@ class SourceLocalDataFrench(DataSource):
     def kaggle(self) -> pd.DataFrame:
         return self.stream_large_csv(file_path=self.sub_folder + 'french_tweets.csv',
                                      file_config={'header': 0, 'chunksize': 100000, 'sep': ',', 'names': self.colnames})
+
+    def betsentiment_teams(self) -> pd.DataFrame:
+        return self.stream_large_csv(file_path=self.sub_folder + 'betsentiment-FR-tweets-sentiment-teams.csv',
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ',', 'names': ['text', 'score'],
+                                                  'usecols': [2, 4], 'encoding': 'latin_1'})
+
+    def betsentiment_worldcup(self) -> pd.DataFrame:
+        return self.stream_large_csv(file_path=self.sub_folder + 'betsentiment-FR-tweets-sentiment-worldcup.csv',
+                                     file_config={'header': 0, 'chunksize': 100000, 'sep': ',', 'names': ['text', 'score'],
+                                                  'usecols': [2, 4], 'encoding': 'latin_1'})
 
 
 class SourceLocalDataDutch(DataSource):
