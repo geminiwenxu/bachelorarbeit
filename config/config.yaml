@@ -9,6 +9,12 @@ strategies:
   - multi_noger
   - multi_all
   - ger_only
+  - multi_noenglish
+  - multi_noarabic
+  - multi_nodutch
+  - multi_nofrench
+  - multi_nochinese
+  - multi_nopolish
 pre_trained_model_name: bert-base-multilingual-cased
 batch_size: 32
 max_len: 256

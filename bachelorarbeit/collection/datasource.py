@@ -218,7 +218,7 @@ class SourceLocalDataDutch(DataSource):
 class SourceLocalSink(DataSource):
     sub_folder = "../sink/"
     colnames = ['score', 'text', 'language', 'source']
-    chunksize = 100000
+    chunksize = 250000
     sep = ';'
     header = 0
 

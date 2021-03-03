@@ -14,7 +14,7 @@ from bachelorarbeit.collection.task import ComputeEnglishSemEval, ComputeEnglish
     ClearLocalSink, SplitTrainTestGerman, ShuffleLanguages, ComputeChineseDouBan, ComputeGermanPotts, \
     ComputeGermanEval, ComputeGermanFilmStarts, ComputeGermanHolidaycheck, ComputeGermanLeipzig, ComputeGermanSB, \
     ComputeDownSampleLanguages, ComputeFrenchKaggle, ComputeDutchSocialMedia, ComputeDutchBookReviews, \
-    ComputeFrenchBetsentimentWorldCup, ComputeFrenchBetsentimentTeams
+    ComputeFrenchBetsentimentWorldCup, ComputeFrenchBetsentimentTeams, FilterLanguagesFromTraining
 
 
 def get_config(path: str) -> dict:
@@ -97,7 +97,8 @@ tasks = [
     ComputeDutchBookReviews(sourceLocalDataDutch, localSink),
     SplitTrainTestGerman(sourceLocalSink, localSink, RANDOM_SEED, TRAIN_SET_SIZE, TEST_SET_SIZE),
     ShuffleLanguages(sourceLocalSink, localSink),
-    ComputeDownSampleLanguages(sourceLocalSink, localSink, RANDOM_SEED)
+    ComputeDownSampleLanguages(sourceLocalSink, localSink, RANDOM_SEED),
+    FilterLanguagesFromTraining(sourceLocalSink, localSink)
 ]
 
 

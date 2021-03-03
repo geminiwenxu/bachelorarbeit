@@ -829,3 +829,25 @@ class ComputeDownSampleLanguages(Task):
 
     def store(self):
         self.sinkLocal.insert(self.model, self.data)
+
+
+class FilterLanguagesFromTraining(Task):
+    def __init__(self, sourceA, sinkA):
+        self.sourceLocalSink = sourceA
+        self.sinkLocal = sinkA
+        self.frac = 1
+        super().__init__()
+
+    def extract(self):
+        self.sink_multi_lang = self.sourceLocalSink.sink_multi_lang()
+
+    def transform(self):
+        for chunk in self.sink_multi_lang:
+            for lang in ['english', 'arabic', 'polish', 'chinese', 'french', 'dutch']:
+                self.target_name = f'multi_lang_no{lang}_sink'
+                self.data = chunk[~chunk['language'].isin([lang])].copy()
+                self.data = self.data.sample(frac=self.frac).reset_index(drop=True)
+                self.store()
+
+    def store(self):
+        self.sinkLocal.insert(self.target_name, self.data)

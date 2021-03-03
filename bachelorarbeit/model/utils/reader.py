@@ -34,6 +34,24 @@ def get_training_data(strategy: str, balanced: bool):
         else:
             logger.info('Loading Training Data: "multi_lang_sink.csv"')
             df = read_cache(file_path='../../../sink/multi_lang_sink.csv')
+    elif strategy == 'multi_lang_noenglish':
+        logger.info('Loading Training Data: "multi_lang_noenglish_sink.csv"')
+        df = read_cache(file_path='../../../sink/multi_lang_noenglish_sink.csv')
+    elif strategy == 'multi_lang_noarabic':
+        logger.info('Loading Training Data: "multi_lang_noarabic_sink.csv"')
+        df = read_cache(file_path='../../../sink/multi_lang_noarabic_sink.csv')
+    elif strategy == 'multi_lang_nopolish':
+        logger.info('Loading Training Data: "multi_lang_nopolish_sink.csv"')
+        df = read_cache(file_path='../../../sink/multi_lang_nopolish_sink.csv')
+    elif strategy == 'multi_lang_nochinese':
+        logger.info('Loading Training Data: "multi_lang_nochinese_sink.csv"')
+        df = read_cache(file_path='../../../sink/multi_lang_nochinese_sink.csv')
+    elif strategy == 'multi_lang_nofrench':
+        logger.info('Loading Training Data: "multi_lang_nofrench_sink.csv"')
+        df = read_cache(file_path='../../../sink/multi_lang_nofrench_sink.csv')
+    elif strategy == 'multi_lang_nodutch':
+        logger.info('Loading Training Data: "multi_lang_nodutch_sink.csv"')
+        df = read_cache(file_path='../../../sink/multi_lang_nodutch_sink.csv')
     else:
         logger.error(NotImplementedError)
         raise NotImplementedError
