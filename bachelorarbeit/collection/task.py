@@ -1,7 +1,9 @@
+import re
+
 import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
-import re
+
 
 class Task:
     def __init__(self, *args, **kwargs):
@@ -391,7 +393,7 @@ class ComputeGermanHolidaycheck(Task):
     def change_score(score):
         if score in ['1', '2', 1, 2]:
             score = 0
-        elif score in ['5', 5, '4', 4]:
+        elif score in ['5', 5, '4', 4, 6, '6']:
             score = 2
         else:
             score = 1
