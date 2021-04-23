@@ -845,7 +845,7 @@ class FilterLanguagesFromTraining(Task):
 
     def transform(self):
         for chunk in self.sink_multi_lang:
-            for lang in ['english', 'arabic', 'polish', 'chinese', 'french', 'dutch']:
+            for lang in ['arabic', 'chinese', 'polish', 'english', 'french', 'dutch']:
                 self.target_name = f'multi_lang_no{lang}_sink'
                 self.data = chunk[~chunk['language'].isin([lang])].copy()
                 self.data = self.data.sample(frac=self.frac).reset_index(drop=True)

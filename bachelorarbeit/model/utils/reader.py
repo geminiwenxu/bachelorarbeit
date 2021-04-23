@@ -34,24 +34,17 @@ def get_training_data(strategy: str, balanced: bool):
         else:
             logger.info('Loading Training Data: "multi_lang_sink.csv"')
             df = read_cache(file_path='../../../sink/multi_lang_sink.csv')
-    elif strategy == 'multi_noenglish':
-        logger.info('Loading Training Data: "multi_lang_noenglish_sink.csv"')
-        df = read_cache(file_path='../../../sink/multi_lang_noenglish_sink.csv')
-    elif strategy == 'multi_noarabic':
-        logger.info('Loading Training Data: "multi_lang_noarabic_sink.csv"')
-        df = read_cache(file_path='../../../sink/multi_lang_noarabic_sink.csv')
-    elif strategy == 'multi_nopolish':
-        logger.info('Loading Training Data: "multi_lang_nopolish_sink.csv"')
-        df = read_cache(file_path='../../../sink/multi_lang_nopolish_sink.csv')
-    elif strategy == 'multi_nochinese':
-        logger.info('Loading Training Data: "multi_lang_nochinese_sink.csv"')
-        df = read_cache(file_path='../../../sink/multi_lang_nochinese_sink.csv')
-    elif strategy == 'multi_nofrench':
-        logger.info('Loading Training Data: "multi_lang_nofrench_sink.csv"')
-        df = read_cache(file_path='../../../sink/multi_lang_nofrench_sink.csv')
-    elif strategy == 'multi_nodutch':
-        logger.info('Loading Training Data: "multi_lang_nodutch_sink.csv"')
-        df = read_cache(file_path='../../../sink/multi_lang_nodutch_sink.csv')
+
+    elif strategy in ['multi_noenglish', 'multi_noarabic', 'multi_nochinese', 'multi_nopolish', 'multi_nofrench', 'multi_nodutch']:
+        key = strategy.split("_")[1]
+        logger.info(f'Loading Training Data: "multi_lang_{key}_sink.csv"')
+        df = read_cache(file_path=f'../../../sink/multi_lang_{key}_sink.csv')
+
+    elif strategy in ['only_german', 'only_english', 'only_arabic', 'only_chinese', 'only_dutch', 'only_french', 'only_polish']:
+        key = strategy.split("_")[1]
+        logger.info(f'Loading Training Data: "{key}_sink.csv"')
+        df = read_cache(file_path=f'../../../sink/{key}_sink.csv')
+
     else:
         logger.error(NotImplementedError)
         raise NotImplementedError
