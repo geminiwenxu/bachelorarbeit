@@ -15,6 +15,12 @@ strategies:
   - multi_nofrench
   - multi_nochinese
   - multi_nopolish
+  - only_arabic
+  - only_chinese
+  - only_french
+  - only_dutch
+  - only_polish
+  - only_english
 pre_trained_model_name: bert-base-multilingual-cased
 batch_size: 32
 max_len: 256
